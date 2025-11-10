@@ -2,7 +2,7 @@
   "dialog_enable": true,
   "online_enable": true,
 
-  "title": "Premium Login",
+  "title": "TKS TEAM DEV",
   "descriptions": [
     "Welcome to Premium Access.",
     "Enter your password to continue.",
@@ -12,7 +12,7 @@
   "button_login": "Login",
   "button_admin": "Admin",
   "button_copy": "Copy ID",
-  "admin_url": "https://google.com",
+  "admin_url": "https://t.me/melawanbudayadominan",
 
   "device_section": [
     {
