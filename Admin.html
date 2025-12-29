@@ -3,27 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Admin Ican2233</title>
+    <title>Ultimate Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10">
+
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10">
         <h1 class="text-2xl font-black text-center tracking-tighter italic text-white uppercase">Super Control Panel</h1>
-        <p class="text-[10px] text-center opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">User & Config Manager</p>
+        <p class="text-[10px] text-center opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">Ican2233 Global Manager</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
+        
         <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
             <div id="loginArea">
-                <input type="password" id="ghToken" placeholder="GitHub Token" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition">
-                <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Connect GitHub</button>
+                <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">Akses GitHub Token</label>
+                <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
+                <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
             </div>
 
             <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500 text-white"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">Buka File</button>
+                <div class="space-y-1">
+                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih Repository</label>
+                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white appearance-none"></select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih File Database (JSON)</label>
+                    <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500 text-white appearance-none"></select>
+                </div>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka & Muat Data</button>
             </div>
         </div>
 
@@ -31,24 +40,33 @@
             <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
                 <i class="fa-solid fa-code-merge mr-2"></i> Update Config Editor
             </h2>
-            <div id="configInputs" class="space-y-5">
-                </div>
-            <button onclick="saveConfigData()" id="btnSaveConfig" class="w-full mt-8 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-amber-500 transition active:scale-95">Update Configuration</button>
+            <div id="configInputs" class="space-y-5"></div>
+            <button onclick="saveConfigData()" id="btnSaveConfig" class="w-full mt-8 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-amber-500 transition active:scale-95">Simpan Perubahan Config</button>
         </div>
 
         <div id="editorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Management</h2>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
             <div id="dynamicInputs" class="space-y-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 transition">Save User</button>
-                <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Cancel</button>
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 transition shadow-lg active:scale-95">Simpan User</button>
+                <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
 
         <div id="dataArea" class="hidden">
-            <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data..." class="w-full p-5 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm mb-6 focus:border-blue-500 shadow-xl">
+            <div class="relative mb-6">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari username, ID, atau password..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+            </div>
+            
+            <div class="flex justify-between items-center mb-4 px-2">
+                <h3 class="font-black text-slate-500 text-[10px] uppercase tracking-[0.4em]">Active Records</h3>
+                <span id="count" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">0</span>
+            </div>
+
             <div id="userList" class="space-y-4"></div>
         </div>
+
     </div>
 
     <script>
@@ -58,17 +76,18 @@
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
+            if(!token) return alert("Masukkan Token!");
             try {
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
                 const repos = await res.json();
                 const select = document.getElementById('repoSelect');
-                select.innerHTML = '<option value="">-- PILIH REPO --</option>';
+                select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
                 document.getElementById('loginArea').classList.add('hidden');
-            } catch (e) { alert("Token Error!"); }
+            } catch (e) { alert("Koneksi Gagal/Token Salah!"); }
         }
 
         async function fetchFiles() {
@@ -87,6 +106,8 @@
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
+            if(!file) return alert("Pilih file!");
+
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 headers: { Authorization: `token ${token}` },
                 cache: 'no-store'
@@ -103,27 +124,27 @@
             }
         }
 
+        // --- LOGIKA CONFIG UPDATE ---
         function showConfigPanel() {
             document.getElementById('editorArea').classList.add('hidden');
             document.getElementById('dataArea').classList.add('hidden');
             document.getElementById('configEditorArea').classList.remove('hidden');
             const container = document.getElementById('configInputs');
             container.innerHTML = '';
-            parseObject(allData, container);
+            parseObjectRecursive(allData, container);
         }
 
-        // Fungsi Rekursif untuk membongkar Object/Nested JSON
-        function parseObject(obj, container, path = '') {
+        function parseObjectRecursive(obj, container, path = '') {
             for (let key in obj) {
                 const currentPath = path ? `${path}.${key}` : key;
-                if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    parseObject(obj[key], container, currentPath);
+                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                    parseObjectRecursive(obj[key], container, currentPath);
                 } else {
                     container.innerHTML += `
                         <div class="space-y-1">
                             <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">${currentPath.replace(/\./g, ' > ')}</label>
                             <input type="text" data-path="${currentPath}" value="${obj[key]}" 
-                            class="config-input w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500">
+                            class="config-input w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500 shadow-inner">
                         </div>`;
                 }
             }
@@ -134,97 +155,141 @@
             inputs.forEach(input => {
                 const path = input.dataset.path.split('.');
                 let ref = allData;
-                for (let i = 0; i < path.length - 1; i++) {
-                    ref = ref[path[i]];
-                }
-                ref[path[path.length - 1]] = isNaN(input.value) ? input.value : Number(input.value);
+                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                const val = input.value;
+                ref[path[path.length - 1]] = isNaN(val) || val === '' ? val : Number(val);
             });
-            await pushToGitHub("Update Config");
+            await pushToGitHub("Update System Config");
         }
 
+        // --- LOGIKA USER MANAGEMENT ---
         function showUserPanel() {
             document.getElementById('configEditorArea').classList.add('hidden');
             document.getElementById('editorArea').classList.remove('hidden');
             document.getElementById('dataArea').classList.remove('hidden');
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
+            
             const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt'];
             fields.forEach(f => {
                 container.innerHTML += `
                     <div>
                         <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>
-                        <input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm">
+                        <input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
                     </div>`;
             });
-            renderUserList();
+            renderUserList(allData);
         }
 
-        async function pushToGitHub(msg) {
-            const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` }
-            });
-            const dataSha = await resSha.json();
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: msg,
-                    content: btoa(JSON.stringify(allData, null, 2)),
-                    sha: dataSha.sha
-                })
-            });
-            if(res.ok) alert("Berhasil Disimpan!");
-            loadJsonData();
-        }
-
-        function renderUserList() {
+        function renderUserList(data) {
             const list = document.getElementById('userList');
+            document.getElementById('count').innerText = data.length;
             list.innerHTML = '';
-            allData.forEach((u, i) => {
+            
+            data.forEach((u, i) => {
+                let details = '';
+                Object.keys(u).forEach(key => {
+                    details += `
+                        <div class="flex justify-between items-center border-b border-white/5 py-1">
+                            <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
+                            <span class="text-[10px] ${key.includes('pass') ? 'text-red-400' : 'text-emerald-400'} font-mono">${u[key] || '-'}</span>
+                        </div>`;
+                });
+
                 list.innerHTML += `
-                    <div class="bg-slate-900/50 p-6 rounded-3xl border border-white/5 flex justify-between items-center shadow-lg">
-                        <div class="font-bold text-white uppercase">${u.username || u.id}</div>
-                        <div class="flex gap-2">
-                            <button onclick="editMode(${i})" class="text-blue-400 p-2"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteUser(${i})" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in zoom-in duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="truncate pr-4">
+                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">REC #${i+1}</div>
+                                <div class="font-black text-white text-lg uppercase italic tracking-tighter">${u.username || u.name || 'UNNAMED'}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="bg-black/40 p-4 rounded-2xl space-y-1 border border-white/5">
+                            ${details}
                         </div>
                     </div>`;
             });
+        }
+
+        async function saveUserData() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"])');
+            let newUser = {};
+            fields.forEach(input => {
+                const fieldName = input.id.replace('field_', '');
+                newUser[fieldName] = input.value;
+            });
+
+            if(index === -1) allData.push(newUser); else allData[index] = newUser;
+            await pushToGitHub(index === -1 ? "Add New User" : "Update User Info");
+            resetForm();
         }
 
         function editMode(i) {
             const u = allData[i];
             document.getElementById('editIndex').value = i;
             Object.keys(u).forEach(f => {
-                if(document.getElementById(`field_${f}`)) document.getElementById(`field_${f}`).value = u[f];
+                const el = document.getElementById(`field_${f}`);
+                if(el) el.value = u[f];
             });
             document.getElementById('btnCancel').classList.remove('hidden');
+            document.getElementById('formTitle').innerText = "Edit: " + (u.username || "User");
             window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        async function saveUserData() {
-            const index = parseInt(document.getElementById('editIndex').value);
-            const fields = Object.keys(allData[0] || {});
-            let newUser = {};
-            fields.forEach(f => newUser[f] = document.getElementById(`field_${f}`).value);
-            if(index === -1) allData.push(newUser); else allData[index] = newUser;
-            await pushToGitHub("User Sync");
-            resetForm();
         }
 
         function resetForm() {
             document.getElementById('editIndex').value = "-1";
             document.querySelectorAll('#dynamicInputs input:not([type="hidden"])').forEach(i => i.value = '');
             document.getElementById('btnCancel').classList.add('hidden');
+            document.getElementById('formTitle').innerText = "Manajemen User";
         }
 
         async function deleteUser(i) {
-            if(!confirm("Hapus?")) return;
+            if(!confirm("Hapus data user ini?")) return;
             allData.splice(i, 1);
-            await pushToGitHub("Remove User");
+            await pushToGitHub("Delete User Record");
+        }
+
+        function filterData() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allData.filter(u => Object.values(u).some(v => String(v).toLowerCase().includes(q)));
+            renderUserList(filtered);
+        }
+
+        // --- CORE GITHUB PUSH ---
+        async function pushToGitHub(msg) {
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
+            
+            btn.disabled = true; btn.innerText = "PROSES...";
+
+            try {
+                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const dataSha = await resSha.json();
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: msg,
+                        content: btoa(JSON.stringify(allData, null, 2)),
+                        sha: dataSha.sha
+                    })
+                });
+                if(res.ok) alert("Data Berhasil Tersimpan ke GitHub!");
+                loadJsonData();
+            } catch (e) { alert("Gagal menyimpan data!"); }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = isArrayMode ? "Simpan User" : "Simpan Perubahan Config";
+            }
         }
     </script>
 </body>
