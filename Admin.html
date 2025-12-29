@@ -3,67 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Ican2233</title>
+    <title>Smart Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-900 min-h-screen pb-10 font-sans text-slate-200">
-    <div class="bg-gradient-to-r from-indigo-600 to-blue-700 p-6 shadow-2xl mb-6 rounded-b-[3rem] border-b-4 border-blue-400">
-        <h1 class="text-2xl font-black text-center tracking-tighter italic">SUPER ADMIN PANEL</h1>
-        <p class="text-[10px] text-center opacity-70 tracking-[0.3em] uppercase mt-1">Ican2233 Global Control</p>
+<body class="bg-slate-950 min-h-screen pb-10 font-sans text-slate-200">
+    <div class="bg-gradient-to-br from-blue-900 via-indigo-950 to-black p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-blue-500/30">
+        <h1 class="text-3xl font-black text-center tracking-tighter italic bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">SMART ADMIN</h1>
+        <p class="text-[10px] text-center opacity-60 tracking-[0.4em] uppercase mt-2">Ican2233 Dynamic System</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
-        <div class="bg-slate-800 p-5 rounded-3xl shadow-xl mb-6 border border-slate-700">
-            <h2 class="text-blue-400 font-bold text-xs mb-3 uppercase tracking-widest"><i class="fa-solid fa-shuttle-space mr-2"></i>Koneksi GitHub</h2>
-            <input type="password" id="ghToken" placeholder="Masukkan Token ghp_..." class="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl mb-3 outline-none text-sm text-blue-300 focus:border-blue-500 transition">
-            <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 shadow-lg uppercase">Hubungkan Akun</button>
+        <div class="bg-slate-900/50 p-6 rounded-3xl backdrop-blur-xl border border-white/5 mb-6 shadow-2xl">
+            <h2 class="text-blue-400 font-bold text-[10px] mb-4 uppercase tracking-[0.2em] flex items-center"><i class="fa-solid fa-key mr-2"></i> Akses Utama</h2>
+            <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-white/10 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-emerald-500/50 transition shadow-inner">
+            <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 shadow-xl uppercase tracking-widest">Hubungkan Akun</button>
         </div>
 
-        <div id="selectorArea" class="hidden space-y-3 mb-6 animate-fade-in text-slate-900">
-            <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-white rounded-2xl font-bold text-sm shadow-inner outline-none border-2 border-blue-500"></select>
-            <select id="fileSelect" class="w-full p-4 bg-white rounded-2xl font-bold text-sm shadow-inner outline-none border-2 border-indigo-500"></select>
-            <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase tracking-widest">Buka Database</button>
+        <div id="selectorArea" class="hidden space-y-4 mb-8 animate-in fade-in duration-500">
+            <div class="relative">
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm appearance-none outline-none border border-white/10 focus:border-blue-500 shadow-xl"></select>
+                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-xs"></i>
+            </div>
+            <div class="relative">
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm appearance-none outline-none border border-white/10 focus:border-indigo-500 shadow-xl"></select>
+                <i class="fa-solid fa-file-code absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none text-xs"></i>
+            </div>
+            <button onclick="loadJsonData()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase tracking-[0.2em]">Buka Database</button>
         </div>
 
-        <div id="editorArea" class="hidden bg-slate-800 p-5 rounded-3xl shadow-xl mb-6 border-t-4 border-green-500">
-            <h2 id="formTitle" class="text-green-400 font-bold text-xs mb-4 uppercase tracking-widest">Tambah User Baru</h2>
-            <div class="space-y-3">
-                <input type="hidden" id="editIndex" value="-1">
-                <input type="text" id="deviceId" placeholder="ID Device" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
-                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
-                <input type="text" id="password" placeholder="Password" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
-                <input type="date" id="expiresAt" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white uppercase">
-                <label class="flex items-center space-x-3 p-4 bg-slate-900 rounded-2xl cursor-pointer border border-slate-700">
-                    <input type="checkbox" id="allowOffline" class="w-5 h-5 rounded border-slate-700 text-blue-600">
-                    <span class="text-sm text-slate-400 uppercase font-bold text-[10px]">Allow Offline</span>
-                </label>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="saveData()" id="btnSave" class="flex-1 bg-green-600 text-white p-4 rounded-2xl font-black text-xs shadow-md uppercase">Simpan</button>
-                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-600 text-white p-4 rounded-2xl font-black text-xs uppercase">Batal</button>
+        <div id="editorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border border-white/5 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-blue-500"></div>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-circle-plus mr-2 animate-pulse"></i> Entry Data
+            </h2>
+            
+            <div id="dynamicInputs" class="space-y-4">
                 </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="saveData()" id="btnSave" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs shadow-lg uppercase hover:bg-emerald-500 transition active:scale-95">Simpan Data</button>
+                <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-slate-600">Batal</button>
             </div>
         </div>
 
         <div id="dataArea" class="hidden">
-            <h3 class="font-black text-slate-500 mb-4 px-2 text-[10px] uppercase tracking-[0.3em] flex justify-between items-center">
-                User List <span id="count" class="bg-slate-700 text-blue-400 px-3 py-1 rounded-full text-[10px] border border-slate-600">0</span>
-            </h3>
-            <div id="userList" class="space-y-3"></div>
+            <div class="flex justify-between items-center mb-6 px-2">
+                <h3 class="font-black text-slate-500 text-[10px] uppercase tracking-[0.4em]">Active Users</h3>
+                <span id="count" class="bg-blue-500/10 text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-bold border border-blue-500/20 shadow-lg shadow-blue-500/5">0</span>
+            </div>
+            <div id="userList" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
         const OWNER = 'Ican2233';
         let allData = [];
-        let currentSHA = '';
+        let currentFields = [];
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
-            if(!token) return alert("Masukkan Token!");
-            
+            if(!token) return alert("Token Wajib Diisi!");
             try {
-                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100`, {
+                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
                 const repos = await res.json();
@@ -71,33 +73,32 @@
                 select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
-                alert("Akun Terhubung!");
-            } catch (e) { alert("Token Salah!"); }
+                alert("Berhasil Terhubung!");
+            } catch (e) { alert("Gagal mengambil data repositori."); }
         }
 
         async function fetchFiles() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             if(!repo) return;
-
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                     headers: { Authorization: `token ${token}` }
                 });
                 const files = await res.json();
                 const select = document.getElementById('fileSelect');
-                select.innerHTML = '<option value="">-- PILIH FILE JSON --</option>';
+                select.innerHTML = '<option value="">-- PILIH FILE DATABASE --</option>';
                 files.filter(f => f.name.endsWith('.json')).forEach(f => {
                     select.innerHTML += `<option value="${f.name}">${f.name}</option>`;
                 });
-            } catch (e) { alert("Gagal mengambil file."); }
+            } catch (e) { alert("Repo ini kosong."); }
         }
 
         async function loadJsonData() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            if(!file) return alert("Pilih file dulu!");
+            if(!file) return alert("Pilih file!");
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
@@ -105,30 +106,60 @@
                     cache: 'no-store'
                 });
                 const data = await res.json();
-                currentSHA = data.sha;
                 allData = JSON.parse(atob(data.content));
+                
+                // Ambil field/kolom otomatis dari data pertama
+                if(allData.length > 0) {
+                    currentFields = Object.keys(allData[0]);
+                    generateInputs();
+                } else {
+                    alert("File kosong! Tambahkan data manual.");
+                    currentFields = ['id', 'username', 'password', 'expiresAt'];
+                    generateInputs();
+                }
+
                 renderUsers();
                 document.getElementById('editorArea').classList.remove('hidden');
                 document.getElementById('dataArea').classList.remove('hidden');
-            } catch (e) { alert("Format JSON tidak didukung atau file kosong."); }
+            } catch (e) { alert("Format file tidak didukung."); }
+        }
+
+        function generateInputs() {
+            const container = document.getElementById('dynamicInputs');
+            container.innerHTML = `<input type="hidden" id="editIndex" value="-1">`;
+            currentFields.forEach(field => {
+                const isDate = field.toLowerCase().includes('exp') || field.toLowerCase().includes('date');
+                container.innerHTML += `
+                    <div class="space-y-1">
+                        <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${field}</label>
+                        <input type="${isDate ? 'date' : 'text'}" id="field_${field}" placeholder="Isi ${field}..." 
+                        class="w-full p-4 bg-black/40 border border-white/5 rounded-2xl outline-none text-sm text-white focus:border-blue-500/50 shadow-inner">
+                    </div>
+                `;
+            });
         }
 
         function renderUsers() {
             const list = document.getElementById('userList');
             document.getElementById('count').innerText = allData.length;
             list.innerHTML = '';
+            
             allData.forEach((u, i) => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-800 p-5 rounded-[2rem] border border-slate-700 flex justify-between items-center shadow-lg";
+                card.className = "bg-slate-900/80 p-6 rounded-[2rem] border border-white/5 flex justify-between items-center shadow-xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300";
+                
+                // Ambil 2 field utama untuk ditampilkan di card
+                const mainTitle = u.username || u.name || Object.values(u)[0];
+                const subTitle = u.expiresAt || u.id || "";
+
                 card.innerHTML = `
-                    <div class="overflow-hidden">
-                        <div class="text-[8px] font-mono text-blue-500 font-bold uppercase truncate opacity-60 mb-1">${u.id || 'NO_ID'}</div>
-                        <div class="font-black text-white text-lg tracking-tight">${u.username}</div>
-                        <div class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">Exp: ${u.expiresAt}</div>
+                    <div class="overflow-hidden pr-4">
+                        <div class="font-black text-white text-lg tracking-tight truncate">${mainTitle}</div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">${subTitle}</div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="editMode(${i})" class="bg-indigo-500/20 text-indigo-400 w-12 h-12 rounded-2xl border border-indigo-500/30 flex items-center justify-center"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteData(${i})" class="bg-red-500/20 text-red-400 w-12 h-12 rounded-2xl border border-red-500/30 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="editMode(${i})" class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center hover:bg-blue-500 hover:text-white transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteData(${i})" class="w-12 h-12 rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center hover:bg-red-500 hover:text-white transition"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(card);
@@ -138,26 +169,22 @@
         function editMode(i) {
             const u = allData[i];
             document.getElementById('editIndex').value = i;
-            document.getElementById('deviceId').value = u.id || "";
-            document.getElementById('username').value = u.username;
-            document.getElementById('password').value = u.password;
-            document.getElementById('expiresAt').value = u.expiresAt;
-            document.getElementById('allowOffline').checked = u.allowOffline;
-            document.getElementById('formTitle').innerText = "EDIT USER: " + u.username;
+            currentFields.forEach(field => {
+                document.getElementById(`field_${field}`).value = u[field] || "";
+            });
+            document.getElementById('formTitle').innerText = "Update: " + (u.username || "User");
             document.getElementById('btnSave').innerText = "UPDATE DATA";
+            document.getElementById('btnSave').classList.replace('bg-emerald-600', 'bg-blue-600');
             document.getElementById('btnCancel').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
             document.getElementById('editIndex').value = "-1";
-            document.getElementById('deviceId').value = "";
-            document.getElementById('username').value = "";
-            document.getElementById('password').value = "";
-            document.getElementById('expiresAt').value = "";
-            document.getElementById('allowOffline').checked = false;
-            document.getElementById('formTitle').innerText = "TAMBAH USER BARU";
-            document.getElementById('btnSave').innerText = "SIMPAN";
+            currentFields.forEach(field => document.getElementById(`field_${field}`).value = "");
+            document.getElementById('formTitle').innerText = "ENTRY DATA";
+            document.getElementById('btnSave').innerText = "SIMPAN DATA";
+            document.getElementById('btnSave').classList.replace('bg-blue-600', 'bg-emerald-600');
             document.getElementById('btnCancel').classList.add('hidden');
         }
 
@@ -167,46 +194,46 @@
             const file = document.getElementById('fileSelect').value;
             const index = parseInt(document.getElementById('editIndex').value);
 
-            const user = {
-                id: document.getElementById('deviceId').value || "dev_" + Math.random().toString(36).substr(2, 5),
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value,
-                expiresAt: document.getElementById('expiresAt').value,
-                allowOffline: document.getElementById('allowOffline').checked
-            };
+            let userData = {};
+            currentFields.forEach(field => {
+                userData[field] = document.getElementById(`field_${field}`).value;
+            });
 
-            if(!user.username || !token) return alert("Isi Data!");
+            if(!token) return alert("Koneksi terputus!");
             
             try {
-                // Get latest SHA
                 const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` }
                 });
                 const dataSha = await resSha.json();
 
-                if(index === -1) allData.push(user); else allData[index] = user;
+                if(index === -1) allData.push(userData); else allData[index] = userData;
 
                 const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     method: 'PUT',
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Admin Update",
+                        message: "Smart Admin Update",
                         content: btoa(JSON.stringify(allData, null, 2)),
                         sha: dataSha.sha
                     })
                 });
 
-                if(update.ok) { alert("Berhasil Terupdate!"); resetForm(); loadJsonData(); }
-            } catch (e) { alert("Gagal Simpan!"); }
+                if(update.ok) { 
+                    alert("Berhasil!"); 
+                    resetForm(); 
+                    loadJsonData(); 
+                }
+            } catch (e) { alert("Gagal simpan ke GitHub."); }
         }
 
         async function deleteData(i) {
-            if(!confirm("Hapus?")) return;
+            if(!confirm("Hapus data ini?")) return;
             allData.splice(i, 1);
-            saveDataManual();
+            saveDataSilent();
         }
 
-        async function saveDataManual() {
+        async function saveDataSilent() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
@@ -218,7 +245,7 @@
                 method: 'PUT',
                 headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: "Delete user",
+                    message: "Data Removed",
                     content: btoa(JSON.stringify(allData, null, 2)),
                     sha: dataSha.sha
                 })
