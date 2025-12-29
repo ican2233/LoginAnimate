@@ -3,35 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Admin Ican2233</title>
+    <title>Global Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-[#0f172a] min-h-screen pb-20 font-sans text-slate-200">
-    <div class="bg-gradient-to-b from-blue-600 to-blue-800 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b-4 border-blue-400/30">
-        <h1 class="text-3xl font-black text-center tracking-tighter italic text-white">ULTIMATE ADMIN</h1>
-        <p class="text-[10px] text-center opacity-80 tracking-[0.4em] uppercase mt-2 text-blue-200">Ican2233 Global Controller</p>
+    <div class="bg-gradient-to-b from-indigo-600 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b-4 border-indigo-400/30">
+        <h1 class="text-3xl font-black text-center tracking-tighter italic text-white uppercase">Global Control</h1>
+        <p class="text-[10px] text-center opacity-80 tracking-[0.4em] uppercase mt-2 text-indigo-200">User & Update Manager System</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
-        <div class="bg-slate-800/50 p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
+        <div class="bg-slate-800 p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
             <div id="loginArea">
                 <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-blue-400 focus:border-blue-500 transition">
-                <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest">Connect Account</button>
+                <button onclick="fetchAllRepos()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Connect GitHub</button>
             </div>
 
             <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500"></select>
-                <button onclick="loadJsonData()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">Open Database</button>
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500 text-white"></select>
+                <button onclick="loadJsonData()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">Load Configuration</button>
             </div>
         </div>
 
+        <div id="configEditorArea" class="hidden bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500">
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-gear mr-2"></i> Update Dialog Config
+            </h2>
+            <div id="configInputs" class="space-y-4"></div>
+            <button onclick="saveConfigData()" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-amber-500 transition">Update All Version</button>
+        </div>
+
         <div id="editorArea" class="hidden bg-slate-800 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Entry Data</h2>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Management</h2>
             <div id="dynamicInputs" class="space-y-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveData()" id="btnSave" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 active:scale-95 transition">Save Change</button>
+                <button onclick="saveData()" id="btnSave" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 transition">Save User</button>
                 <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Cancel</button>
             </div>
         </div>
@@ -39,22 +47,17 @@
         <div id="dataArea" class="hidden">
             <div class="relative mb-6">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari user atau data apapun..." class="w-full p-5 pl-14 bg-slate-800 rounded-2xl border border-slate-700 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data..." class="w-full p-5 pl-14 bg-slate-800 rounded-2xl border border-slate-700 outline-none text-sm focus:border-blue-500 shadow-xl transition">
             </div>
-
-            <div class="flex justify-between items-center mb-6 px-2">
-                <h3 class="font-black text-slate-500 text-[10px] uppercase tracking-[0.4em]">Active Records</h3>
-                <span id="count" class="bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-bold">0</span>
-            </div>
-            
             <div id="userList" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
         const OWNER = 'Ican2233';
-        let allData = [];
+        let allData = null;
         let currentFields = [];
+        let isArrayMode = false;
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
@@ -68,7 +71,7 @@
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
                 document.getElementById('loginArea').classList.add('hidden');
-            } catch (e) { alert("Error connecting to GitHub!"); }
+            } catch (e) { alert("Token Error!"); }
         }
 
         async function fetchFiles() {
@@ -96,81 +99,133 @@
                 });
                 const data = await res.json();
                 allData = JSON.parse(atob(data.content));
-                if(allData.length > 0) currentFields = Object.keys(allData[0]);
-                else currentFields = ['id', 'username', 'password', 'expiresAt'];
                 
-                generateInputs();
-                renderUsers(allData);
-                document.getElementById('editorArea').classList.remove('hidden');
-                document.getElementById('dataArea').classList.remove('hidden');
-            } catch (e) { alert("File error!"); }
+                // DETEKSI TIPE FILE
+                if(Array.isArray(allData)) {
+                    // MODE USER (ARRAY)
+                    isArrayMode = true;
+                    document.getElementById('configEditorArea').classList.add('hidden');
+                    document.getElementById('editorArea').classList.remove('hidden');
+                    document.getElementById('dataArea').classList.remove('hidden');
+                    if(allData.length > 0) currentFields = Object.keys(allData[0]);
+                    generateUserInputs();
+                    renderUsers(allData);
+                } else {
+                    // MODE CONFIG (OBJECT)
+                    isArrayMode = false;
+                    document.getElementById('editorArea').classList.add('hidden');
+                    document.getElementById('dataArea').classList.add('hidden');
+                    document.getElementById('configEditorArea').classList.remove('hidden');
+                    generateConfigInputs(allData);
+                }
+            } catch (e) { alert("File format not supported!"); }
         }
 
-        function generateInputs() {
+        // GENERATE UNTUK CONFIG UPDATE
+        function generateConfigInputs(obj, parentKey = '') {
+            const container = document.getElementById('configInputs');
+            if(!parentKey) container.innerHTML = '';
+
+            for (let key in obj) {
+                const value = obj[key];
+                const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    generateConfigInputs(value, fullKey);
+                } else {
+                    container.innerHTML += `
+                        <div class="bg-slate-900/50 p-3 rounded-xl border border-white/5">
+                            <label class="text-[9px] text-amber-500 font-black uppercase tracking-widest">${fullKey.replace(/\./g, ' > ')}</label>
+                            <input type="text" data-key="${fullKey}" value="${value}" class="config-field w-full p-3 bg-transparent border-b border-slate-700 outline-none text-sm text-white focus:border-amber-500">
+                        </div>`;
+                }
+            }
+        }
+
+        // GENERATE UNTUK USER
+        function generateUserInputs() {
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = `<input type="hidden" id="editIndex" value="-1">`;
             currentFields.forEach(field => {
-                const isDate = field.toLowerCase().includes('exp') || field.toLowerCase().includes('date');
                 container.innerHTML += `
                     <div>
                         <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${field}</label>
-                        <input type="${isDate ? 'date' : 'text'}" id="field_${field}" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-blue-500">
+                        <input type="text" id="field_${field}" class="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">
                     </div>`;
             });
         }
 
-        function renderUsers(data) {
-            const list = document.getElementById('userList');
-            document.getElementById('count').innerText = data.length;
-            list.innerHTML = '';
-            
-            data.forEach((u, i) => {
-                // Generate detail html otomatis untuk semua field
-                let detailsHtml = '';
-                currentFields.forEach(key => {
-                    if(key !== 'username' && key !== 'name') {
-                        detailsHtml += `<div class="flex justify-between border-b border-white/5 py-1">
-                            <span class="text-slate-500 uppercase text-[8px] font-bold">${key}</span>
-                            <span class="text-slate-300 text-[10px] font-mono">${u[key] || '-'}</span>
-                        </div>`;
-                    }
-                });
-
-                const card = document.createElement('div');
-                card.className = "bg-slate-800/40 p-6 rounded-[2rem] border border-white/5 shadow-xl";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="truncate pr-4">
-                            <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">RECORD #${i+1}</div>
-                            <div class="font-black text-white text-xl tracking-tight uppercase italic">${u.username || u.name || 'UNNAMED'}</div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/20 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteData(${i})" class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 border border-red-500/20 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="space-y-1 bg-black/20 p-4 rounded-2xl border border-white/5">
-                        ${detailsHtml}
-                    </div>
-                `;
-                list.appendChild(card);
+        // SAVE UNTUK CONFIG UPDATE
+        async function saveConfigData() {
+            const fields = document.querySelectorAll('.config-field');
+            fields.forEach(f => {
+                const keys = f.dataset.key.split('.');
+                let temp = allData;
+                for(let i=0; i < keys.length - 1; i++) temp = temp[keys[i]];
+                temp[keys[keys.length - 1]] = f.value;
             });
+            await pushToGitHub("Update Config Dialog");
         }
 
-        function filterData() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allData.filter(u => {
-                return Object.values(u).some(val => String(val).toLowerCase().includes(query));
+        // SAVE UNTUK USER
+        async function saveData() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            let userData = {};
+            currentFields.forEach(f => userData[f] = document.getElementById(`field_${f}`).value);
+
+            if(index === -1) allData.push(userData); else allData[index] = userData;
+            await pushToGitHub(index === -1 ? "Add User" : "Edit User");
+            resetForm();
+        }
+
+        async function pushToGitHub(msg) {
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            try {
+                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const dataSha = await resSha.json();
+
+                const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: msg,
+                        content: btoa(JSON.stringify(allData, null, 2)),
+                        sha: dataSha.sha
+                    })
+                });
+                if(update.ok) { alert("Success Updated!"); loadJsonData(); }
+            } catch (e) { alert("Push failed!"); }
+        }
+
+        function renderUsers(data) {
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+            data.forEach((u, i) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800/40 p-6 rounded-[2rem] border border-white/5";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-black text-white text-lg uppercase italic">${u.username || u.name || 'USER'}</div>
+                            <div class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">ID: ${u.id || '-'}</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteData(${i})" class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                list.appendChild(card);
             });
-            renderUsers(filtered);
         }
 
         function editMode(i) {
             const u = allData[i];
             document.getElementById('editIndex').value = i;
             currentFields.forEach(f => document.getElementById(`field_${f}`).value = u[f] || "");
-            document.getElementById('formTitle').innerText = "EDITING RECORD";
-            document.getElementById('btnSave').innerText = "UPDATE DATA";
             document.getElementById('btnCancel').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
@@ -178,70 +233,19 @@
         function resetForm() {
             document.getElementById('editIndex').value = "-1";
             currentFields.forEach(f => document.getElementById(`field_${f}`).value = "");
-            document.getElementById('formTitle').innerText = "ENTRY DATA";
-            document.getElementById('btnSave').innerText = "SAVE DATA";
             document.getElementById('btnCancel').classList.add('hidden');
         }
 
-        async function saveData() {
-            const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            const index = parseInt(document.getElementById('editIndex').value);
-            const btn = document.getElementById('btnSave');
-
-            let userData = {};
-            currentFields.forEach(f => userData[f] = document.getElementById(`field_${f}`).value);
-
-            btn.disabled = true; btn.innerText = "UPLOADING...";
-
-            try {
-                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    headers: { Authorization: `token ${token}` }
-                });
-                const dataSha = await resSha.json();
-
-                if(index === -1) allData.push(userData); else allData[index] = userData;
-
-                const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: "Ultimate Admin Update",
-                        content: btoa(JSON.stringify(allData, null, 2)),
-                        sha: dataSha.sha
-                    })
-                });
-
-                if(update.ok) { alert("Database Updated!"); resetForm(); loadJsonData(); }
-            } catch (e) { alert("Save failed!"); }
-            finally { btn.disabled = false; }
-        }
-
         async function deleteData(i) {
-            if(!confirm("Hapus data ini?")) return;
+            if(!confirm("Hapus?")) return;
             allData.splice(i, 1);
-            saveDataSilent();
+            await pushToGitHub("Delete Record");
         }
 
-        async function saveDataSilent() {
-            const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` }
-            });
-            const dataSha = await resSha.json();
-            await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: "Record Deleted",
-                    content: btoa(JSON.stringify(allData, null, 2)),
-                    sha: dataSha.sha
-                })
-            });
-            loadJsonData();
+        function filterData() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const f = allData.filter(u => Object.values(u).some(v => String(v).toLowerCase().includes(q)));
+            renderUsers(f);
         }
     </script>
 </body>
