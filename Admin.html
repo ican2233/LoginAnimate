@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,14 +11,14 @@
 <body class="bg-slate-100 min-h-screen pb-10">
     <div class="bg-blue-600 text-white p-6 shadow-lg mb-6 rounded-b-3xl">
         <h1 class="text-xl font-bold text-center uppercase tracking-wider">Admin Manager</h1>
-        <p class="text-xs text-center opacity-80 mt-1">Ican2233 GitHub System</p>
+        <p class="text-xs text-center opacity-80 mt-1 text-yellow-300 font-bold tracking-widest">FILE: LoginUserAndPass.json</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm mb-4">
             <h2 class="font-bold text-gray-700 mb-3 text-sm italic">PENGATURAN AKSES</h2>
             <input type="password" id="ghToken" placeholder="Masukkan Token ghp_..." class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
-            <input type="text" id="repoName" placeholder="Nama Repositori (Contoh: LoginAnimate)" class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
+            <input type="text" id="repoName" placeholder="Nama Repo (Contoh: LoginAnimate)" class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
             <button onclick="loadUsers()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-black transition text-sm shadow-md">MUAT DATA USER</button>
         </div>
 
@@ -52,15 +53,12 @@
 
     <script>
         const OWNER = 'Ican2233'; 
-        const FILE_PATH = 'data.json'; 
+        const FILE_PATH = 'LoginUserAndPass.json'; // SUDAH DIUPDATE
 
         async function loadUsers() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoName').value;
             if(!token || !repo) return alert("Harap isi Token dan Nama Repo!");
-
-            const btn = event.target;
-            btn.innerText = "LOADING...";
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
@@ -72,9 +70,7 @@
                 const content = JSON.parse(atob(data.content));
                 renderUsers(content);
             } catch (err) {
-                alert("Gagal! Pastikan Nama Repo benar & Token valid.");
-            } finally {
-                btn.innerText = "MUAT DATA USER";
+                alert("Gagal! Pastikan Nama Repo & Nama File (LoginUserAndPass.json) sudah benar di GitHub.");
             }
         }
 
@@ -83,11 +79,6 @@
             document.getElementById('count').innerText = users.length;
             list.innerHTML = '';
             
-            if(users.length === 0) {
-                list.innerHTML = '<p class="text-center text-gray-400 py-5">Database kosong.</p>';
-                return;
-            }
-
             users.forEach((u, index) => {
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center";
@@ -120,9 +111,7 @@
             };
 
             if(!newUser.username || !token) return alert("Username dan Token wajib diisi!");
-
-            btn.disabled = true; 
-            btn.innerText = "SEDANG MENYIMPAN...";
+            btn.disabled = true; btn.innerText = "SEDANG MENYIMPAN...";
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
@@ -132,4 +121,51 @@
                 const content = JSON.parse(atob(data.content));
                 content.push(newUser);
 
-                const update = await fetch(`https://api.github.com/repos/${OWNER
+                const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Add user: " + newUser.username,
+                        content: btoa(JSON.stringify(content, null, 2)),
+                        sha: data.sha
+                    })
+                });
+
+                if(update.ok) { 
+                    alert("Berhasil disimpan!"); loadUsers(); 
+                    document.getElementById('deviceId').value = '';
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                }
+            } catch (err) { alert("Error saat menyimpan."); }
+            finally { btn.disabled = false; btn.innerText = "SIMPAN KE GITHUB"; }
+        }
+
+        async function deleteUser(index) {
+            if(!confirm("Hapus user ini?")) return;
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoName').value;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const data = await res.json();
+                let content = JSON.parse(atob(data.content));
+                content.splice(index, 1);
+
+                await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Delete user",
+                        content: btoa(JSON.stringify(content, null, 2)),
+                        sha: data.sha
+                    })
+                });
+                loadUsers();
+            } catch (err) { alert("Gagal menghapus."); }
+        }
+    </script>
+</body>
+</html>
