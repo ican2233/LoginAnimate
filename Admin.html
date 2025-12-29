@@ -16,28 +16,34 @@
     <div class="max-w-md mx-auto px-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm mb-4">
             <h2 class="font-bold text-gray-700 mb-3 text-sm">PENGATURAN AKSES</h2>
-            <input type="password" id="ghToken" placeholder="Masukkan Token GitHub Anda" class="w-full p-3 border border-gray-200 rounded-xl mb-3 focus:ring-2 focus:ring-blue-400 outline-none text-sm">
-            <input type="text" id="repoName" placeholder="Nama Repositori (Contoh: data-user)" class="w-full p-3 border border-gray-200 rounded-xl mb-3 focus:ring-2 focus:ring-blue-400 outline-none text-sm">
-            <button onclick="loadUsers()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-black transition text-sm">MUAT DATA</button>
+            <input type="password" id="ghToken" placeholder="Masukkan Token ghp_..." class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
+            <input type="text" id="repoName" placeholder="Nama Repositori (Contoh: LoginAnimate)" class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
+            <button onclick="loadUsers()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-black transition text-sm">MUAT DATA USER</button>
         </div>
 
         <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border-t-4 border-blue-500">
-            <h2 class="font-bold text-gray-700 mb-3 text-sm">TAMBAH USER</h2>
+            <h2 class="font-bold text-gray-700 mb-3 text-sm uppercase">Tambah User Baru</h2>
             <div class="space-y-3">
-                <input type="text" id="username" placeholder="Username Baru" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm">
-                <input type="text" id="password" placeholder="Password" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm">
-                <input type="date" id="expiresAt" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm">
-                <label class="flex items-center space-x-3 p-2 cursor-pointer">
+                <input type="text" id="deviceId" placeholder="ID Device (Contoh: android_id_1)" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+                <input type="text" id="username" placeholder="Username" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+                <input type="text" id="password" placeholder="Password" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+                <div class="flex flex-col">
+                    <label class="text-[10px] text-gray-400 ml-2 mb-1">Masa Aktif Sampai:</label>
+                    <input type="date" id="expiresAt" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+                </div>
+                <label class="flex items-center space-x-3 p-2 cursor-pointer bg-blue-50 rounded-xl">
                     <input type="checkbox" id="allowOffline" class="w-5 h-5 rounded text-blue-600">
-                    <span class="text-sm text-gray-600">Izinkan Offline</span>
+                    <span class="text-sm text-gray-600 font-medium">Izinkan Mode Offline</span>
                 </label>
                 <button onclick="addUser()" id="btnTambah" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold shadow-md hover:bg-blue-700 text-sm">SIMPAN USER KE GITHUB</button>
             </div>
         </div>
 
-        <h3 class="font-bold text-gray-500 mb-3 px-2 text-xs uppercase tracking-widest">Daftar User Aktif</h3>
+        <h3 class="font-bold text-gray-500 mb-3 px-2 text-xs uppercase tracking-widest flex justify-between">
+            Daftar User Aktif <span id="count" class="text-blue-600">0</span>
+        </h3>
         <div id="userList" class="space-y-3">
-            <p class="text-center text-gray-400 py-10 text-sm">Belum ada data dimuat.</p>
+            <p class="text-center text-gray-400 py-10 text-sm italic">Klik "Muat Data User" untuk menampilkan.</p>
         </div>
     </div>
 
@@ -48,7 +54,7 @@
         async function loadUsers() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoName').value;
-            if(!token || !repo) return alert("Isi Token dan Nama Repo!");
+            if(!token || !repo) return alert("Lengkapi Token & Nama Repo!");
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
@@ -59,22 +65,24 @@
                 const content = JSON.parse(atob(data.content));
                 renderUsers(content);
             } catch (err) {
-                alert("Gagal! Pastikan Nama Repo & Token benar.");
+                alert("Gagal memuat! Cek koneksi, Token, atau Nama Repo.");
             }
         }
 
         function renderUsers(users) {
             const list = document.getElementById('userList');
+            document.getElementById('count').innerText = users.length;
             list.innerHTML = '';
             users.forEach((u, index) => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center";
+                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center";
                 card.innerHTML = `
                     <div>
-                        <div class="font-bold text-gray-800">${u.username}</div>
-                        <div class="text-[10px] text-gray-400 uppercase tracking-tighter">Pass: ${u.password} | Exp: ${u.expiresAt}</div>
+                        <div class="text-[10px] font-mono text-blue-500 font-bold uppercase">${u.id || 'Tanpa ID'}</div>
+                        <div class="font-bold text-gray-800 text-base">${u.username}</div>
+                        <div class="text-[10px] text-gray-400">Pass: ${u.password} | Exp: ${u.expiresAt}</div>
                     </div>
-                    <button onclick="deleteUser(${index})" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+                    <button onclick="deleteUser(${index})" class="text-red-300 hover:text-red-600 p-2 transition"><i class="fa-solid fa-trash-can"></i></button>
                 `;
                 list.appendChild(card);
             });
@@ -86,16 +94,16 @@
             const btn = document.getElementById('btnTambah');
             
             const newUser = {
-                id: Math.random().toString(36).substr(2, 9),
+                id: document.getElementById('deviceId').value || "device_" + Math.random().toString(36).substr(2, 5),
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value,
                 expiresAt: document.getElementById('expiresAt').value,
                 allowOffline: document.getElementById('allowOffline').checked
             };
 
-            if(!newUser.username || !token) return alert("Lengkapi data!");
+            if(!newUser.username || !token) return alert("Username & Token wajib diisi!");
 
-            btn.disabled = true; btn.innerText = "MENGIRIM...";
+            btn.disabled = true; btn.innerText = "SEDANG MENYIMPAN...";
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
@@ -110,6 +118,50 @@
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: "Tambah user via Admin Panel",
+                        content: btoa(JSON.stringify(content, null, 2)),
+                        sha: data.sha
+                    })
+                });
+
+                if(update.ok) { 
+                    alert("Berhasil disimpan ke GitHub!"); 
+                    loadUsers(); 
+                    document.getElementById('deviceId').value = '';
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                }
+            } catch (err) { alert("Terjadi kesalahan sistem."); }
+            finally { btn.disabled = false; btn.innerText = "SIMPAN USER KE GITHUB"; }
+        }
+
+        async function deleteUser(index) {
+            if(!confirm("Hapus user ini dari database?")) return;
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoName').value;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const data = await res.json();
+                let content = JSON.parse(atob(data.content));
+                content.splice(index, 1);
+
+                await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Hapus user",
+                        content: btoa(JSON.stringify(content, null, 2)),
+                        sha: data.sha
+                    })
+                });
+                loadUsers();
+            } catch (err) { alert("Gagal menghapus."); }
+        }
+    </script>
+</body>
+</html>
                         content: btoa(JSON.stringify(content, null, 2)),
                         sha: data.sha
                     })
