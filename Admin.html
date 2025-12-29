@@ -3,116 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel Ican2233</title>
+    <title>Super Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-100 min-h-screen pb-10">
-    <div class="bg-blue-600 text-white p-6 shadow-lg mb-6 rounded-b-3xl">
-        <h1 class="text-xl font-bold text-center uppercase tracking-wider">Admin Manager</h1>
-        <p class="text-xs text-center opacity-80 mt-1 text-yellow-300 font-bold tracking-widest">FILE: LoginUserAndPass.json</p>
+<body class="bg-slate-900 min-h-screen pb-10 font-sans text-slate-200">
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-700 p-6 shadow-2xl mb-6 rounded-b-[3rem] border-b-4 border-blue-400">
+        <h1 class="text-2xl font-black text-center tracking-tighter italic">SUPER ADMIN PANEL</h1>
+        <p class="text-[10px] text-center opacity-70 tracking-[0.3em] uppercase mt-1">Ican2233 Global Control</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm mb-4">
-            <h2 class="font-bold text-gray-700 mb-3 text-sm italic uppercase">Akses GitHub</h2>
-            <input type="password" id="ghToken" placeholder="Masukkan Token ghp_..." class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
-            <input type="text" id="repoName" placeholder="Nama Repo (LoginAnimate)" class="w-full p-3 border border-gray-200 rounded-xl mb-3 outline-none text-sm focus:ring-2 focus:ring-blue-400">
-            <button onclick="loadUsers()" class="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-black transition text-sm shadow-md">MUAT DATA USER</button>
+        <div class="bg-slate-800 p-5 rounded-3xl shadow-xl mb-6 border border-slate-700">
+            <h2 class="text-blue-400 font-bold text-xs mb-3 uppercase tracking-widest"><i class="fa-solid fa-shuttle-space mr-2"></i>Koneksi GitHub</h2>
+            <input type="password" id="ghToken" placeholder="Masukkan Token ghp_..." class="w-full p-4 bg-slate-900 border border-slate-700 rounded-2xl mb-3 outline-none text-sm text-blue-300 focus:border-blue-500 transition">
+            <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 shadow-lg uppercase">Hubungkan Akun</button>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border-t-4 border-green-500 shadow-md">
-            <h2 id="formTitle" class="font-bold text-gray-700 mb-3 text-sm uppercase">Tambah User Baru</h2>
+        <div id="selectorArea" class="hidden space-y-3 mb-6 animate-fade-in text-slate-900">
+            <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-white rounded-2xl font-bold text-sm shadow-inner outline-none border-2 border-blue-500"></select>
+            <select id="fileSelect" class="w-full p-4 bg-white rounded-2xl font-bold text-sm shadow-inner outline-none border-2 border-indigo-500"></select>
+            <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase tracking-widest">Buka Database</button>
+        </div>
+
+        <div id="editorArea" class="hidden bg-slate-800 p-5 rounded-3xl shadow-xl mb-6 border-t-4 border-green-500">
+            <h2 id="formTitle" class="text-green-400 font-bold text-xs mb-4 uppercase tracking-widest">Tambah User Baru</h2>
             <div class="space-y-3">
                 <input type="hidden" id="editIndex" value="-1">
-                <input type="text" id="deviceId" placeholder="ID Device" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100 font-mono">
-                <input type="text" id="username" placeholder="Username" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
-                <input type="text" id="password" placeholder="Password" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
-                <div class="flex flex-col">
-                    <label class="text-[10px] text-gray-400 ml-2 mb-1 uppercase font-bold">Masa Aktif Sampai:</label>
-                    <input type="date" id="expiresAt" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
-                </div>
-                <label class="flex items-center space-x-3 p-3 cursor-pointer bg-blue-50 rounded-xl">
-                    <input type="checkbox" id="allowOffline" class="w-5 h-5 rounded text-blue-600 focus:ring-0">
-                    <span class="text-sm text-gray-700 font-medium">Izinkan Mode Offline</span>
+                <input type="text" id="deviceId" placeholder="ID Device" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
+                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
+                <input type="text" id="password" placeholder="Password" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white">
+                <input type="date" id="expiresAt" class="w-full p-4 bg-slate-900 rounded-2xl outline-none text-sm border border-slate-700 text-white uppercase">
+                <label class="flex items-center space-x-3 p-4 bg-slate-900 rounded-2xl cursor-pointer border border-slate-700">
+                    <input type="checkbox" id="allowOffline" class="w-5 h-5 rounded border-slate-700 text-blue-600">
+                    <span class="text-sm text-slate-400 uppercase font-bold text-[10px]">Allow Offline</span>
                 </label>
-                <div class="flex gap-2">
-                    <button onclick="saveUser()" id="btnSave" class="flex-1 bg-green-600 text-white p-4 rounded-2xl font-bold shadow-lg hover:bg-green-700 transition text-sm uppercase">SIMPAN USER</button>
-                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-gray-400 text-white p-4 rounded-2xl font-bold shadow-lg hover:bg-gray-500 transition text-sm uppercase">BATAL</button>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="saveData()" id="btnSave" class="flex-1 bg-green-600 text-white p-4 rounded-2xl font-black text-xs shadow-md uppercase">Simpan</button>
+                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-600 text-white p-4 rounded-2xl font-black text-xs uppercase">Batal</button>
                 </div>
             </div>
         </div>
 
-        <h3 class="font-bold text-gray-500 mb-3 px-2 text-xs uppercase tracking-widest flex justify-between items-center">
-            Daftar User Aktif <span id="count" class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px]">0</span>
-        </h3>
-        <div id="userList" class="space-y-3">
-            <p class="text-center text-gray-400 py-10 text-sm italic">Klik "Muat Data User" untuk menampilkan.</p>
+        <div id="dataArea" class="hidden">
+            <h3 class="font-black text-slate-500 mb-4 px-2 text-[10px] uppercase tracking-[0.3em] flex justify-between items-center">
+                User List <span id="count" class="bg-slate-700 text-blue-400 px-3 py-1 rounded-full text-[10px] border border-slate-600">0</span>
+            </h3>
+            <div id="userList" class="space-y-3"></div>
         </div>
     </div>
 
     <script>
-        const OWNER = 'Ican2233'; 
-        const FILE_PATH = 'LoginUserAndPass.json';
-        let allUsers = [];
+        const OWNER = 'Ican2233';
+        let allData = [];
+        let currentSHA = '';
 
-        async function loadUsers() {
+        async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoName').value;
-            if(!token || !repo) return alert("Isi Token & Nama Repo!");
+            if(!token) return alert("Masukkan Token!");
+            
+            try {
+                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const repos = await res.json();
+                const select = document.getElementById('repoSelect');
+                select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
+                repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
+                document.getElementById('selectorArea').classList.remove('hidden');
+                alert("Akun Terhubung!");
+            } catch (e) { alert("Token Salah!"); }
+        }
+
+        async function fetchFiles() {
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            if(!repo) return;
 
             try {
-                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const files = await res.json();
+                const select = document.getElementById('fileSelect');
+                select.innerHTML = '<option value="">-- PILIH FILE JSON --</option>';
+                files.filter(f => f.name.endsWith('.json')).forEach(f => {
+                    select.innerHTML += `<option value="${f.name}">${f.name}</option>`;
+                });
+            } catch (e) { alert("Gagal mengambil file."); }
+        }
+
+        async function loadJsonData() {
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            if(!file) return alert("Pilih file dulu!");
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` },
                     cache: 'no-store'
                 });
                 const data = await res.json();
-                allUsers = JSON.parse(atob(data.content));
+                currentSHA = data.sha;
+                allData = JSON.parse(atob(data.content));
                 renderUsers();
-            } catch (err) { alert("Gagal memuat data!"); }
+                document.getElementById('editorArea').classList.remove('hidden');
+                document.getElementById('dataArea').classList.remove('hidden');
+            } catch (e) { alert("Format JSON tidak didukung atau file kosong."); }
         }
 
         function renderUsers() {
             const list = document.getElementById('userList');
-            document.getElementById('count').innerText = allUsers.length;
+            document.getElementById('count').innerText = allData.length;
             list.innerHTML = '';
-            
-            allUsers.forEach((u, index) => {
+            allData.forEach((u, i) => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center";
+                card.className = "bg-slate-800 p-5 rounded-[2rem] border border-slate-700 flex justify-between items-center shadow-lg";
                 card.innerHTML = `
-                    <div class="overflow-hidden pr-2">
-                        <div class="text-[9px] font-mono text-blue-500 font-bold uppercase truncate">${u.id || 'No ID'}</div>
-                        <div class="font-bold text-gray-800 text-base">${u.username}</div>
-                        <div class="text-[10px] text-gray-400">PW: ${u.password} | EXP: ${u.expiresAt}</div>
+                    <div class="overflow-hidden">
+                        <div class="text-[8px] font-mono text-blue-500 font-bold uppercase truncate opacity-60 mb-1">${u.id || 'NO_ID'}</div>
+                        <div class="font-black text-white text-lg tracking-tight">${u.username}</div>
+                        <div class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">Exp: ${u.expiresAt}</div>
                     </div>
-                    <div class="flex gap-1">
-                        <button onclick="editUser(${index})" class="bg-amber-100 text-amber-600 p-3 rounded-xl transition hover:bg-amber-200">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button onclick="deleteUser(${index})" class="bg-red-100 text-red-500 p-3 rounded-xl transition hover:bg-red-200">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
+                    <div class="flex gap-2">
+                        <button onclick="editMode(${i})" class="bg-indigo-500/20 text-indigo-400 w-12 h-12 rounded-2xl border border-indigo-500/30 flex items-center justify-center"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteData(${i})" class="bg-red-500/20 text-red-400 w-12 h-12 rounded-2xl border border-red-500/30 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(card);
             });
         }
 
-        function editUser(index) {
-            const u = allUsers[index];
-            document.getElementById('editIndex').value = index;
-            document.getElementById('deviceId').value = u.id;
+        function editMode(i) {
+            const u = allData[i];
+            document.getElementById('editIndex').value = i;
+            document.getElementById('deviceId').value = u.id || "";
             document.getElementById('username').value = u.username;
             document.getElementById('password').value = u.password;
             document.getElementById('expiresAt').value = u.expiresAt;
             document.getElementById('allowOffline').checked = u.allowOffline;
-            
-            document.getElementById('formTitle').innerText = "Edit User: " + u.username;
-            document.getElementById('btnSave').innerText = "SIMPAN PERUBAHAN";
-            document.getElementById('btnSave').classList.replace('bg-green-600', 'bg-amber-600');
+            document.getElementById('formTitle').innerText = "EDIT USER: " + u.username;
+            document.getElementById('btnSave').innerText = "UPDATE DATA";
             document.getElementById('btnCancel').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
@@ -122,19 +156,18 @@
             document.getElementById('password').value = "";
             document.getElementById('expiresAt').value = "";
             document.getElementById('allowOffline').checked = false;
-            document.getElementById('formTitle').innerText = "Tambah User Baru";
-            document.getElementById('btnSave').innerText = "SIMPAN USER";
-            document.getElementById('btnSave').classList.replace('bg-amber-600', 'bg-green-600');
+            document.getElementById('formTitle').innerText = "TAMBAH USER BARU";
+            document.getElementById('btnSave').innerText = "SIMPAN";
             document.getElementById('btnCancel').classList.add('hidden');
         }
 
-        async function saveUser() {
+        async function saveData() {
             const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoName').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
             const index = parseInt(document.getElementById('editIndex').value);
-            const btn = document.getElementById('btnSave');
 
-            const userData = {
+            const user = {
                 id: document.getElementById('deviceId').value || "dev_" + Math.random().toString(36).substr(2, 5),
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value,
@@ -142,68 +175,55 @@
                 allowOffline: document.getElementById('allowOffline').checked
             };
 
-            if(!userData.username || !token) return alert("Lengkapi data!");
-            btn.disabled = true; btn.innerText = "PROSES...";
-
+            if(!user.username || !token) return alert("Isi Data!");
+            
             try {
-                // 1. Ambil SHA terbaru
-                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                // Get latest SHA
+                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                const data = await res.json();
-                let content = JSON.parse(atob(data.content));
+                const dataSha = await resSha.json();
 
-                // 2. Update atau Tambah
-                if(index === -1) {
-                    content.push(userData);
-                } else {
-                    content[index] = userData;
-                }
+                if(index === -1) allData.push(user); else allData[index] = user;
 
-                // 3. Simpan ke GitHub
-                const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
+                const update = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     method: 'PUT',
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: index === -1 ? "Add user" : "Edit user",
-                        content: btoa(JSON.stringify(content, null, 2)),
-                        sha: data.sha
+                        message: "Admin Update",
+                        content: btoa(JSON.stringify(allData, null, 2)),
+                        sha: dataSha.sha
                     })
                 });
 
-                if(update.ok) {
-                    alert("Berhasil!");
-                    resetForm();
-                    loadUsers();
-                }
-            } catch (err) { alert("Error sistem!"); }
-            finally { btn.disabled = false; }
+                if(update.ok) { alert("Berhasil Terupdate!"); resetForm(); loadJsonData(); }
+            } catch (e) { alert("Gagal Simpan!"); }
         }
 
-        async function deleteUser(index) {
-            if(!confirm("Hapus user?")) return;
+        async function deleteData(i) {
+            if(!confirm("Hapus?")) return;
+            allData.splice(i, 1);
+            saveDataManual();
+        }
+
+        async function saveDataManual() {
             const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoName').value;
-
-            try {
-                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
-                    headers: { Authorization: `token ${token}` }
-                });
-                const data = await res.json();
-                let content = JSON.parse(atob(data.content));
-                content.splice(index, 1);
-
-                await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${FILE_PATH}`, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: "Delete user",
-                        content: btoa(JSON.stringify(content, null, 2)),
-                        sha: data.sha
-                    })
-                });
-                loadUsers();
-            } catch (err) { alert("Gagal!"); }
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                headers: { Authorization: `token ${token}` }
+            });
+            const dataSha = await resSha.json();
+            await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                method: 'PUT',
+                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: "Delete user",
+                    content: btoa(JSON.stringify(allData, null, 2)),
+                    sha: dataSha.sha
+                })
+            });
+            loadJsonData();
         }
     </script>
 </body>
