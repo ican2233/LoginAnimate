@@ -3,31 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Manager Ican2233</title>
+    <title>Global Manager Ican2233 - Fixed Search</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em;
             -webkit-appearance: none; appearance: none;
         }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-[#0f172a] min-h-screen pb-20 text-slate-200">
 
-    <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-10 shadow-2xl mb-8 rounded-b-[3.5rem] border-b border-white/10 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-            <div class="absolute top-[-10%] left-[-10%] w-64 h-64 bg-white rounded-full blur-3xl"></div>
-        </div>
-        <h1 class="text-3xl font-extrabold text-center tracking-tighter italic text-white uppercase drop-shadow-md">Super Control Panel</h1>
-        <p class="text-[10px] text-center opacity-80 tracking-[0.5em] uppercase mt-2 text-indigo-100 font-bold">Yeyen Global Manager</p>
+    <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-10 shadow-2xl mb-8 rounded-b-[3.5rem] border-b border-white/10 text-center">
+        <h1 class="text-3xl font-extrabold tracking-tighter italic text-white uppercase">Super Control Panel</h1>
+        <p class="text-[10px] opacity-80 tracking-[0.5em] uppercase mt-2 text-indigo-100 font-bold">Yeyen Global Manager</p>
     </div>
 
     <div class="max-w-md mx-auto px-5">
@@ -49,14 +43,12 @@
             </div>
         </div>
 
-        <div id="editorArea" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div id="editorArea" class="hidden">
             
             <div id="configSection" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-indigo-500 border border-white/5">
-                <h2 class="text-indigo-400 font-extrabold text-xs mb-6 uppercase tracking-widest flex items-center gap-2">
-                    <i class="fa-solid fa-sliders"></i> Konfigurasi Sistem
-                </h2>
+                <h2 class="text-indigo-400 font-extrabold text-xs mb-6 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-sliders"></i> System Config</h2>
                 <div id="configInputs" class="space-y-5"></div>
-                <button onclick="saveData()" id="btnSaveConfig" class="w-full mt-8 bg-indigo-600 text-white p-5 rounded-2xl font-extrabold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">Update Konfigurasi</button>
+                <button onclick="saveData()" id="btnSaveConfig" class="w-full mt-8 bg-indigo-600 text-white p-5 rounded-2xl font-extrabold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">Update Config</button>
             </div>
 
             <div id="userSection" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
@@ -71,7 +63,7 @@
             <div id="dataListSection" class="hidden space-y-4">
                 <div class="relative mb-6">
                     <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl transition-all">
+                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl transition-all">
                 </div>
                 <div id="itemsContainer" class="space-y-4"></div>
             </div>
@@ -85,6 +77,7 @@
         let isArrayMode = false;
         let editIndex = -1;
 
+        // On Load
         window.onload = () => {
             const savedToken = localStorage.getItem(STORAGE_KEY);
             if(savedToken) {
@@ -94,32 +87,29 @@
         };
 
         function clearSavedToken() {
-            if(confirm("Logout dan hapus token?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+            if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
         }
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
-            if(!token) return;
             try {
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                if(!res.ok) throw new Error();
                 const repos = await res.json();
                 localStorage.setItem(STORAGE_KEY, token);
                 const select = document.getElementById('repoSelect');
-                select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
+                select.innerHTML = '<option value="">-- PILIH REPO --</option>';
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
                 document.getElementById('btnLogout').classList.remove('hidden');
                 document.getElementById('btnConnect').innerText = "TERKONEKSI";
-            } catch (e) { alert("Token tidak valid atau error koneksi."); }
+            } catch (e) { alert("Error: Token Salah"); }
         }
 
         async function fetchFiles() {
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
-            if(!repo) return;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
             });
@@ -133,32 +123,24 @@
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            if(!file) return alert("Pilih file terlebih dahulu!");
+            if(!file) return;
 
-            try {
-                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    headers: { Authorization: `token ${token}` }, cache: 'no-store'
-                });
-                const data = await res.json();
-                allData = JSON.parse(atob(data.content));
-                
-                document.getElementById('editorArea').classList.remove('hidden');
-                isArrayMode = Array.isArray(allData);
-                
-                if (isArrayMode) {
-                    showUserLayout();
-                } else {
-                    showConfigLayout();
-                }
-            } catch (e) { alert("Gagal memproses JSON."); }
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                headers: { Authorization: `token ${token}` }, cache: 'no-store'
+            });
+            const data = await res.json();
+            allData = JSON.parse(atob(data.content));
+            
+            document.getElementById('editorArea').classList.remove('hidden');
+            isArrayMode = Array.isArray(allData);
+            
+            if (isArrayMode) showUserLayout(); else showConfigLayout();
         }
 
-        // --- LAYOUT CONFIG (OBJECT) ---
         function showConfigLayout() {
             document.getElementById('configSection').classList.remove('hidden');
             document.getElementById('userSection').classList.add('hidden');
             document.getElementById('dataListSection').classList.add('hidden');
-            
             const container = document.getElementById('configInputs');
             container.innerHTML = '';
             renderRecursiveInputs(allData, container);
@@ -168,147 +150,120 @@
             for (let key in obj) {
                 const currentPath = path ? `${path}.${key}` : key;
                 const value = obj[key];
-                const wrapper = document.createElement('div');
-                wrapper.className = "flex flex-col gap-1.5";
-
                 if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                    // Nested Object
                     const group = document.createElement('div');
                     group.className = "p-4 bg-slate-800/30 rounded-3xl border border-white/5 space-y-4 my-2";
                     group.innerHTML = `<label class="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest pl-2">${key}</label>`;
                     container.appendChild(group);
                     renderRecursiveInputs(value, group, currentPath);
                 } else if (Array.isArray(value)) {
-                    // Array of Objects (like socialLinks)
                     const group = document.createElement('div');
                     group.className = "p-4 bg-slate-950/40 rounded-3xl border border-indigo-500/20 space-y-6 my-2";
-                    group.innerHTML = `<label class="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest pl-2">${key} (List)</label>`;
+                    group.innerHTML = `<label class="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest pl-2">${key}</label>`;
                     value.forEach((item, idx) => {
                         const itemWrapper = document.createElement('div');
-                        itemWrapper.className = "p-3 bg-white/5 rounded-2xl space-y-3";
+                        itemWrapper.className = "p-3 bg-white/5 rounded-2xl";
                         renderRecursiveInputs(item, itemWrapper, `${currentPath}.${idx}`);
                         group.appendChild(itemWrapper);
                     });
                     container.appendChild(group);
                 } else {
-                    // Primitive values
-                    let inputHtml = '';
-                    if (typeof value === 'boolean') {
-                        inputHtml = `<select data-path="${currentPath}" data-type="bool" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500">
-                            <option value="true" ${value === true ? 'selected' : ''}>TRUE</option>
-                            <option value="false" ${value === false ? 'selected' : ''}>FALSE</option>
-                        </select>`;
-                    } else {
-                        inputHtml = `<input type="text" data-path="${currentPath}" value="${value}" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500 shadow-inner">`;
-                    }
-                    wrapper.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
-                    container.appendChild(wrapper);
+                    let inputHtml = typeof value === 'boolean' ? 
+                        `<select data-path="${currentPath}" data-type="bool" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500"><option value="true" ${value===true?'selected':''}>TRUE</option><option value="false" ${value===false?'selected':''}>FALSE</option></select>` :
+                        `<input type="text" data-path="${currentPath}" value="${value}" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500 shadow-inner">`;
+                    const div = document.createElement('div');
+                    div.className = "flex flex-col gap-1.5";
+                    div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
+                    container.appendChild(div);
                 }
             }
         }
 
-        // --- LAYOUT USER (ARRAY) ---
         function showUserLayout() {
             document.getElementById('configSection').classList.add('hidden');
             document.getElementById('userSection').classList.remove('hidden');
             document.getElementById('dataListSection').classList.remove('hidden');
-            
             const container = document.getElementById('userInputs');
             container.innerHTML = '';
-            
-            // Ambil struktur dari item pertama atau default
             const template = allData.length > 0 ? allData[0] : { username: "", password: "", expiresAt: "", allowOffline: false };
-            
             for (let key in template) {
-                const wrapper = document.createElement('div');
-                wrapper.className = "flex flex-col gap-1.5";
-                let inputHtml = '';
-                
-                if (key.toLowerCase().includes('expires')) {
-                    inputHtml = `<input type="date" id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">`;
-                } else if (typeof template[key] === 'boolean' || key.toLowerCase().includes('allow')) {
-                    inputHtml = `<select id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">
-                        <option value="false">FALSE</option><option value="true">TRUE</option></select>`;
-                } else {
-                    inputHtml = `<input type="text" id="user_${key}" placeholder="Input ${key}..." class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">`;
-                }
-                
-                wrapper.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
-                container.appendChild(wrapper);
+                let inputHtml = key.toLowerCase().includes('expires') ? 
+                    `<input type="date" id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white">` :
+                    (typeof template[key] === 'boolean' ? `<select id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white"><option value="false">FALSE</option><option value="true">TRUE</option></select>` :
+                    `<input type="text" id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white">`);
+                const div = document.createElement('div');
+                div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
+                container.appendChild(div);
             }
             renderItemsList(allData);
         }
 
+        // --- FIXED RENDER (Menyimpan Index Asli) ---
         function renderItemsList(data) {
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
-            data.forEach((item, index) => {
-                const title = item.username || item.name || item.id || item.title || `Item #${index + 1}`;
-                let detailHtml = '';
-                for (let k in item) {
-                    detailHtml += `<div class="flex justify-between text-[10px] border-b border-white/5 py-1">
-                        <span class="text-slate-500 uppercase">${k}</span>
-                        <span class="font-mono text-emerald-400 truncate ml-4">${item[k]}</span>
-                    </div>`;
-                }
+            data.forEach((item) => {
+                // Cari index asli dari allData
+                const originalIndex = allData.indexOf(item);
+                const title = item.username || item.name || item.id || `Item #${originalIndex + 1}`;
                 
+                let details = '';
+                for(let k in item) details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span class="text-slate-500">${k}</span><span class="text-emerald-400 font-mono truncate ml-4">${item[k]}</span></div>`;
+
                 container.innerHTML += `
-                <div class="bg-slate-900/50 p-5 rounded-[2rem] border border-white/5 shadow-xl hover:border-indigo-500/30 transition-all">
+                <div class="bg-slate-900/50 p-5 rounded-[2rem] border border-white/5 shadow-xl">
                     <div class="flex justify-between items-start mb-4">
                         <div class="truncate">
-                            <span class="text-[8px] bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase font-bold tracking-tighter">Record</span>
+                            <span class="text-[8px] bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase font-bold">Index: ${originalIndex}</span>
                             <h3 class="text-lg font-black italic uppercase tracking-tighter text-white truncate mt-1">${title}</h3>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editItem(${index})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center active:scale-90 transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteItem(${index})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition-all"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="editItem(${originalIndex})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem(${originalIndex})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
-                    <div class="bg-black/30 p-4 rounded-2xl space-y-1">${detailHtml}</div>
+                    <div class="bg-black/30 p-4 rounded-2xl space-y-1">${details}</div>
                 </div>`;
             });
         }
 
-        // --- LOGIKA SIMPAN & EDIT ---
+        function editItem(idx) {
+            editIndex = idx;
+            const item = allData[idx];
+            for (let k in item) {
+                const el = document.getElementById(`user_${k}`);
+                if (el) el.value = String(item[k]);
+            }
+            document.getElementById('formTitle').innerText = "Edit: " + (item.username || "User");
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo({top: 200, behavior: 'smooth'});
+        }
+
         async function saveData() {
             const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
-            const originalText = btn.innerText;
-            
             if (isArrayMode) {
-                // Mode Array (User)
-                const fields = document.querySelectorAll('.user-field');
                 let newItem = {};
-                fields.forEach(f => {
+                document.querySelectorAll('.user-field').forEach(f => {
                     const key = f.id.replace('user_', '');
                     let val = f.value;
-                    if (val === 'true') val = true;
-                    if (val === 'false') val = false;
+                    if (val === 'true') val = true; else if (val === 'false') val = false;
                     newItem[key] = val;
                 });
-                if (editIndex > -1) allData[editIndex] = newItem;
-                else allData.push(newItem);
+                if (editIndex > -1) allData[editIndex] = newItem; else allData.push(newItem);
             } else {
-                // Mode Object (Config)
-                const inputs = document.querySelectorAll('.data-input');
-                inputs.forEach(input => {
+                document.querySelectorAll('.data-input').forEach(input => {
                     const path = input.getAttribute('data-path').split('.');
                     const type = input.getAttribute('data-type');
                     let val = input.value;
                     if (type === 'bool') val = (val === 'true');
-                    
                     let ref = allData;
                     for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
                     ref[path[path.length - 1]] = val;
                 });
             }
-
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Memproses...`;
-            
-            await pushToGitHub(isArrayMode ? "Update List Data" : "Update System Config");
-            
-            btn.disabled = false;
-            btn.innerText = originalText;
+            btn.disabled = true; btn.innerText = "PUSHING...";
+            await pushToGitHub("Update Data");
+            btn.disabled = false; btn.innerText = "SIMPAN DATA";
             resetForm();
         }
 
@@ -316,42 +271,18 @@
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            try {
-                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    headers: { Authorization: `token ${token}` }
-                });
-                const shaData = await resSha.json();
-                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: msg,
-                        content: btoa(JSON.stringify(allData, null, 2)),
-                        sha: shaData.sha
-                    })
-                });
-                if(res.ok) alert("Berhasil disimpan ke GitHub!");
-                loadJsonData();
-            } catch (e) { alert("Gagal menyimpan ke GitHub."); }
+            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
+            const shaData = await resSha.json();
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                method: 'PUT',
+                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(allData, null, 2)), sha: shaData.sha })
+            });
+            if(res.ok) { alert("Berhasil!"); loadJsonData(); }
         }
 
-        function editItem(index) {
-            editIndex = index;
-            const item = allData[index];
-            for (let k in item) {
-                const el = document.getElementById(`user_${k}`);
-                if (el) el.value = String(item[k]);
-            }
-            document.getElementById('formTitle').innerText = "Edit Data: " + (item.username || "Item");
-            document.getElementById('btnCancel').classList.remove('hidden');
-            window.scrollTo({top: 200, behavior: 'smooth'});
-        }
-
-        function deleteItem(index) {
-            if (confirm("Hapus data ini secara permanen?")) {
-                allData.splice(index, 1);
-                pushToGitHub("Delete Item Record");
-            }
+        function deleteItem(idx) {
+            if(confirm("Hapus?")) { allData.splice(idx, 1); pushToGitHub("Delete Item"); }
         }
 
         function resetForm() {
@@ -363,9 +294,7 @@
 
         function filterData() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allData.filter(item => 
-                Object.values(item).some(val => String(val).toLowerCase().includes(q))
-            );
+            const filtered = allData.filter(item => Object.values(item).some(v => String(v).toLowerCase().includes(q)));
             renderItemsList(filtered);
         }
     </script>
