@@ -3,23 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Admin Ican2233 - Smart Inputs</title>
+    <title>Ultimate Admin Ican2233 - Smart Inputs & Config</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em;
+            padding-right: 2.5rem; -webkit-appearance: none; appearance: none;
         }
     </style>
 </head>
@@ -27,7 +19,7 @@
 
     <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10">
         <h1 class="text-2xl font-black text-center tracking-tighter italic text-white uppercase">Super Control Panel</h1>
-        <p class="text-[10px] text-center opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">Yeyen Global Manager</p>
+        <p class="text-[10px] text-center opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">Ican2233 Global Manager</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
@@ -37,16 +29,24 @@
                 <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">Akses GitHub Token</label>
                 <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
                 <div class="flex gap-2">
-                    <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
+                    <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan</button>
                     <button onclick="clearSavedToken()" id="btnLogout" class="hidden bg-red-600/20 text-red-500 px-4 rounded-2xl border border-red-500/20 active:scale-90 transition"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-4">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Buka & Muat Data</button>
+            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white appearance-none"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white appearance-none"></select>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka & Muat Data</button>
             </div>
+        </div>
+
+        <div id="configEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-gear mr-2"></i> Config / Update Manager
+            </h2>
+            <div id="configInputs" class="space-y-5"></div>
+            <button onclick="saveConfigData()" id="btnSaveConfig" class="w-full mt-8 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Simpan Perubahan Config</button>
         </div>
 
         <div id="editorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
@@ -71,18 +71,14 @@
         const OWNER = 'Ican2233';
         const STORAGE_KEY = 'ican_github_token';
         let allData = null;
+        let isArrayMode = false;
 
         window.onload = function() {
             const savedToken = localStorage.getItem(STORAGE_KEY);
-            if(savedToken) {
-                document.getElementById('ghToken').value = savedToken;
-                fetchAllRepos(true);
-            }
+            if(savedToken) { document.getElementById('ghToken').value = savedToken; fetchAllRepos(); }
         };
 
-        function clearSavedToken() {
-            if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
-        }
+        function clearSavedToken() { if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
@@ -91,7 +87,6 @@
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                if(!res.ok) throw new Error();
                 const repos = await res.json();
                 localStorage.setItem(STORAGE_KEY, token);
                 const select = document.getElementById('repoSelect');
@@ -100,7 +95,7 @@
                 document.getElementById('selectorArea').classList.remove('hidden');
                 document.getElementById('btnLogout').classList.remove('hidden');
                 document.getElementById('btnConnect').innerText = "TERHUBUNG";
-            } catch (e) { alert("Token Salah!"); }
+            } catch (e) { alert("Gagal mengambil repo!"); }
         }
 
         async function fetchFiles() {
@@ -119,138 +114,125 @@
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
+            if(!file) return;
+
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` },
-                cache: 'no-store'
+                headers: { Authorization: `token ${token}` }, cache: 'no-store'
             });
             const data = await res.json();
             allData = JSON.parse(atob(data.content));
-            showUserPanel();
+            
+            if(Array.isArray(allData)) {
+                isArrayMode = true;
+                showUserPanel();
+            } else {
+                isArrayMode = false;
+                showConfigPanel();
+            }
         }
 
+        // --- LOGIKA CONFIG EDITOR (OBJECT MODE) ---
+        function showConfigPanel() {
+            document.getElementById('editorArea').classList.add('hidden');
+            document.getElementById('dataArea').classList.add('hidden');
+            document.getElementById('configEditorArea').classList.remove('hidden');
+            const container = document.getElementById('configInputs');
+            container.innerHTML = '';
+            
+            for (let key in allData) {
+                if (typeof allData[key] !== 'object') {
+                    container.innerHTML += `
+                        <div>
+                            <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${key}</label>
+                            <input type="text" data-key="${key}" value="${allData[key]}" class="config-field w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500 transition shadow-inner">
+                        </div>`;
+                }
+            }
+        }
+
+        async function saveConfigData() {
+            const inputs = document.querySelectorAll('.config-field');
+            inputs.forEach(input => {
+                const key = input.dataset.key;
+                allData[key] = input.value;
+            });
+            await pushToGitHub("Update Config File");
+        }
+
+        // --- LOGIKA USER MANAGER (ARRAY MODE) ---
         function showUserPanel() {
+            document.getElementById('configEditorArea').classList.add('hidden');
             document.getElementById('editorArea').classList.remove('hidden');
             document.getElementById('dataArea').classList.remove('hidden');
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
             
-            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'name', 'password', 'expiresAt', 'allowOffline'];
+            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt', 'allowOffline'];
             
             fields.forEach(f => {
-                const fieldLower = f.toLowerCase();
+                const fl = f.toLowerCase();
                 let inputHtml = '';
-
-                if (fieldLower === 'allowoffline') {
-                    inputHtml = `
-                        <select id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
-                            <option value="false">FALSE (Online Only)</option>
-                            <option value="true">TRUE (Allow Offline)</option>
-                        </select>`;
-                } 
-                else if (fieldLower === 'expiresat') {
+                if (fl === 'allowoffline') {
+                    inputHtml = `<select id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition"><option value="false">FALSE</option><option value="true">TRUE</option></select>`;
+                } else if (fl === 'expiresat') {
                     inputHtml = `<input type="date" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
-                } 
-                else {
+                } else {
                     inputHtml = `<input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
                 }
-
-                container.innerHTML += `
-                    <div>
-                        <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>
-                        ${inputHtml}
-                    </div>`;
+                container.innerHTML += `<div><label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>${inputHtml}</div>`;
             });
             renderUserList(allData);
         }
 
-        // --- LOGIKA CERDAS UNTUK LABEL NAMA ---
         function renderUserList(data) {
             const list = document.getElementById('userList');
             list.innerHTML = '';
             data.forEach((u, i) => {
-                // Mencari kunci yang paling pas untuk dijadikan judul card
                 const displayName = u.username || u.name || u.id || u.key || `USER #${i+1}`;
-                
                 let details = '';
-                Object.keys(u).forEach(key => {
-                    let valStyle = "text-emerald-400";
-                    if(u[key] === "false" || u[key] === false) valStyle = "text-red-400";
-                    if(u[key] === "true" || u[key] === true) valStyle = "text-blue-400";
-
-                    details += `
-                        <div class="flex justify-between items-center border-b border-white/5 py-1">
-                            <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
-                            <span class="text-[10px] ${valStyle} font-mono">${u[key]}</span>
-                        </div>`;
+                Object.keys(u).forEach(k => {
+                    details += `<div class="flex justify-between border-b border-white/5 py-1"><span class="text-[8px] text-slate-500 uppercase font-bold">${k}</span><span class="text-[10px] text-emerald-400 font-mono truncate pl-4">${u[k]}</span></div>`;
                 });
-                list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in duration-300">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="truncate">
-                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">RECORD #${i+1}</div>
-                                <div class="font-black text-white text-lg uppercase italic tracking-tighter truncate">${displayName}</div>
-                            </div>
-                            <div class="flex gap-2 flex-shrink-0">
-                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-2xl space-y-1">${details}</div>
-                    </div>`;
+                list.innerHTML += `<div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg"><div class="flex justify-between items-start mb-4"><div class="truncate"><div class="text-[8px] text-blue-400 font-bold uppercase mb-1">REC #${i+1}</div><div class="font-black text-white text-lg uppercase italic truncate">${displayName}</div></div><div class="flex gap-2 flex-shrink-0"><button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button></div></div><div class="bg-black/40 p-4 rounded-2xl space-y-1">${details}</div></div>`;
             });
         }
 
         function editMode(i) {
             const u = allData[i];
             document.getElementById('editIndex').value = i;
-            Object.keys(u).forEach(f => {
-                const el = document.getElementById(`field_${f}`);
-                if(el) {
-                    el.value = String(u[f]);
-                }
-            });
+            Object.keys(u).forEach(f => { if(document.getElementById(`field_${f}`)) document.getElementById(`field_${f}`).value = String(u[f]); });
             document.getElementById('btnCancel').classList.remove('hidden');
-            const displayName = u.username || u.name || u.id || u.key || "User";
-            document.getElementById('formTitle').innerText = "Edit: " + displayName;
+            document.getElementById('formTitle').innerText = "Edit: " + (u.username || u.name || "User");
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         async function saveUserData() {
             const index = parseInt(document.getElementById('editIndex').value);
-            const container = document.getElementById('dynamicInputs');
-            const fields = container.querySelectorAll('input:not([type="hidden"]), select');
-            
+            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select');
             let newUser = {};
-            fields.forEach(field => {
-                const fieldName = field.id.replace('field_', '');
-                newUser[fieldName] = field.value;
-            });
-
+            fields.forEach(f => newUser[f.id.replace('field_', '')] = f.value);
             if(index === -1) allData.push(newUser); else allData[index] = newUser;
-            await pushToGitHub(index === -1 ? "Add User" : "Update User");
+            await pushToGitHub("Update User Data");
             resetForm();
         }
 
         function resetForm() {
             document.getElementById('editIndex').value = "-1";
-            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select');
-            fields.forEach(f => f.value = (f.tagName === 'SELECT' ? 'false' : ''));
+            document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select').forEach(f => f.value = (f.tagName==='SELECT'?'false':''));
             document.getElementById('btnCancel').classList.add('hidden');
             document.getElementById('formTitle').innerText = "Manajemen User";
         }
 
-        async function deleteUser(i) {
-            if(!confirm("Hapus?")) return;
-            allData.splice(i, 1);
-            await pushToGitHub("Delete User");
-        }
+        async function deleteUser(i) { if(confirm("Hapus?")) { allData.splice(i, 1); await pushToGitHub("Delete Record"); } }
 
+        // --- PUSH KE GITHUB ---
         async function pushToGitHub(msg) {
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            const btn = document.getElementById('btnSaveUser');
+            const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
             btn.disabled = true; btn.innerText = "SAVING...";
+
             try {
                 const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` }
@@ -261,14 +243,14 @@
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: msg,
-                        content: btoa(JSON.stringify(allData, null, 2)),
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(allData, null, 2)))),
                         sha: dataSha.sha
                     })
                 });
                 alert("Berhasil!");
                 loadJsonData();
-            } catch (e) { alert("Gagal!"); }
-            finally { btn.disabled = false; btn.innerText = "Simpan User"; }
+            } catch (e) { alert("Gagal Simpan!"); }
+            finally { btn.disabled = false; btn.innerText = isArrayMode ? "Simpan User" : "Simpan Perubahan Config"; }
         }
 
         function filterData() {
