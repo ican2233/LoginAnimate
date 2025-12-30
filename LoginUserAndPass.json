@@ -10,8 +10,8 @@
     "id": "a793b723e87a4e99",
     "username": "user1",
     "password": "user1",
-    "expiresAt": "2026-01-26",
-    "allowOffline": true
+    "expiresAt": "2026-01-28",
+    "allowOffline": "true"
   },
   {
     "id": "android_device_id_2",
