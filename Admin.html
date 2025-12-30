@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Admin Ican2233</title>
+    <title>Ultimate Admin Ican2233 - Auto Mode</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass-effect { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
 </head>
 <body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
 
@@ -20,10 +25,14 @@
             <div id="loginArea">
                 <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">Akses GitHub Token</label>
                 <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
-                <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
+                <div class="flex gap-2">
+                    <button onclick="fetchAllRepos()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan</button>
+                    <button onclick="clearToken()" class="bg-red-500/10 text-red-500 p-4 rounded-2xl hover:bg-red-500/20 transition"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+                <p id="statusMsg" class="text-[9px] text-center mt-3 text-slate-500 italic"></p>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
+            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-fade">
                 <div class="space-y-1">
                     <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih Repository</label>
                     <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white appearance-none"></select>
@@ -56,14 +65,8 @@
         <div id="dataArea" class="hidden">
             <div class="relative mb-6">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari username, ID, atau password..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
             </div>
-            
-            <div class="flex justify-between items-center mb-4 px-2">
-                <h3 class="font-black text-slate-500 text-[10px] uppercase tracking-[0.4em]">Active Records</h3>
-                <span id="count" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">0</span>
-            </div>
-
             <div id="userList" class="space-y-4"></div>
         </div>
 
@@ -74,24 +77,53 @@
         let allData = null;
         let isArrayMode = false;
 
+        // --- SISTEM OTOMATISASI ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('gh_token_ican');
+            if (savedToken) {
+                document.getElementById('ghToken').value = savedToken;
+                document.getElementById('statusMsg').innerText = "Mengambil data otomatis...";
+                fetchAllRepos();
+            }
+        });
+
+        function clearToken() {
+            if(confirm("Hapus token yang tersimpan?")) {
+                localStorage.removeItem('gh_token_ican');
+                location.reload();
+            }
+        }
+
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
             if(!token) return alert("Masukkan Token!");
+            
             try {
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
+                
+                if(!res.ok) throw new Error();
+
+                // Simpan token jika berhasil
+                localStorage.setItem('gh_token_ican', token);
+                
                 const repos = await res.json();
                 const select = document.getElementById('repoSelect');
                 select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
+                
                 document.getElementById('selectorArea').classList.remove('hidden');
-                document.getElementById('loginArea').classList.add('hidden');
-            } catch (e) { alert("Koneksi Gagal/Token Salah!"); }
+                document.getElementById('loginArea').classList.add('opacity-50', 'pointer-events-none');
+                document.getElementById('statusMsg').innerText = "Terhubung sebagai " + OWNER;
+            } catch (e) { 
+                alert("Token Salah atau Limit API Habis!");
+                localStorage.removeItem('gh_token_ican');
+            }
         }
 
         async function fetchFiles() {
-            const token = document.getElementById('ghToken').value;
+            const token = localStorage.getItem('gh_token_ican');
             const repo = document.getElementById('repoSelect').value;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
@@ -103,7 +135,7 @@
         }
 
         async function loadJsonData() {
-            const token = document.getElementById('ghToken').value;
+            const token = localStorage.getItem('gh_token_ican');
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
             if(!file) return alert("Pilih file!");
@@ -124,7 +156,7 @@
             }
         }
 
-        // --- LOGIKA CONFIG UPDATE ---
+        // --- LOGIKA EDITOR ---
         function showConfigPanel() {
             document.getElementById('editorArea').classList.add('hidden');
             document.getElementById('dataArea').classList.add('hidden');
@@ -162,7 +194,6 @@
             await pushToGitHub("Update System Config");
         }
 
-        // --- LOGIKA USER MANAGEMENT ---
         function showUserPanel() {
             document.getElementById('configEditorArea').classList.add('hidden');
             document.getElementById('editorArea').classList.remove('hidden');
@@ -170,7 +201,7 @@
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
             
-            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt'];
+            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password'];
             fields.forEach(f => {
                 container.innerHTML += `
                     <div>
@@ -183,33 +214,19 @@
 
         function renderUserList(data) {
             const list = document.getElementById('userList');
-            document.getElementById('count').innerText = data.length;
             list.innerHTML = '';
-            
             data.forEach((u, i) => {
-                let details = '';
-                Object.keys(u).forEach(key => {
-                    details += `
-                        <div class="flex justify-between items-center border-b border-white/5 py-1">
-                            <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
-                            <span class="text-[10px] ${key.includes('pass') ? 'text-red-400' : 'text-emerald-400'} font-mono">${u[key] || '-'}</span>
-                        </div>`;
-                });
-
                 list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in zoom-in duration-300">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="truncate pr-4">
-                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">REC #${i+1}</div>
-                                <div class="font-black text-white text-lg uppercase italic tracking-tighter">${u.username || u.name || 'UNNAMED'}</div>
+                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-fade">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-[8px] text-blue-400 font-bold uppercase mb-1">RECORD #${i+1}</div>
+                                <div class="font-black text-white text-lg uppercase italic">${u.username || u.name || 'N/A'}</div>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                             </div>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-2xl space-y-1 border border-white/5">
-                            ${details}
                         </div>
                     </div>`;
             });
@@ -237,7 +254,6 @@
                 if(el) el.value = u[f];
             });
             document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('formTitle').innerText = "Edit: " + (u.username || "User");
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
@@ -245,13 +261,12 @@
             document.getElementById('editIndex').value = "-1";
             document.querySelectorAll('#dynamicInputs input:not([type="hidden"])').forEach(i => i.value = '');
             document.getElementById('btnCancel').classList.add('hidden');
-            document.getElementById('formTitle').innerText = "Manajemen User";
         }
 
         async function deleteUser(i) {
-            if(!confirm("Hapus data user ini?")) return;
+            if(!confirm("Hapus data ini?")) return;
             allData.splice(i, 1);
-            await pushToGitHub("Delete User Record");
+            await pushToGitHub("Delete Record");
         }
 
         function filterData() {
@@ -260,14 +275,13 @@
             renderUserList(filtered);
         }
 
-        // --- CORE GITHUB PUSH ---
         async function pushToGitHub(msg) {
-            const token = document.getElementById('ghToken').value;
+            const token = localStorage.getItem('gh_token_ican');
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
             const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
             
-            btn.disabled = true; btn.innerText = "PROSES...";
+            btn.disabled = true; btn.innerText = "MENGIRIM...";
 
             try {
                 const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
@@ -283,13 +297,10 @@
                         sha: dataSha.sha
                     })
                 });
-                if(res.ok) alert("Data Berhasil Tersimpan ke GitHub!");
+                if(res.ok) alert("Data Tersimpan!");
                 loadJsonData();
-            } catch (e) { alert("Gagal menyimpan data!"); }
-            finally { 
-                btn.disabled = false; 
-                btn.innerText = isArrayMode ? "Simpan User" : "Simpan Perubahan Config";
-            }
+            } catch (e) { alert("Gagal!"); }
+            finally { btn.disabled = false; btn.innerText = "Simpan"; }
         }
     </script>
 </body>
