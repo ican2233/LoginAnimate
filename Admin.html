@@ -3,69 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Admin Ican2233 - System Config</title>
+    <title>Global Manager Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em;
-            padding-right: 2.5rem; -webkit-appearance: none; appearance: none;
+            background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em;
+            -webkit-appearance: none; appearance: none;
         }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
+<body class="bg-[#0f172a] min-h-screen pb-20 text-slate-200">
 
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
-        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">Super Control Panel</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">Yeyen Global Manager</p>
+    <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 p-10 shadow-2xl mb-8 rounded-b-[3.5rem] border-b border-white/10 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-64 h-64 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <h1 class="text-3xl font-extrabold text-center tracking-tighter italic text-white uppercase drop-shadow-md">Super Control Panel</h1>
+        <p class="text-[10px] text-center opacity-80 tracking-[0.5em] uppercase mt-2 text-indigo-100 font-bold">Yeyen Global Manager</p>
     </div>
 
-    <div class="max-w-md mx-auto px-4">
+    <div class="max-w-md mx-auto px-5">
         
-        <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
+        <div class="bg-slate-900/60 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/5 mb-6 shadow-2xl">
             <div id="loginArea">
-                <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">Akses GitHub Token</label>
-                <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
+                <label class="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest ml-3 mb-2 block">GitHub Access Token</label>
+                <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" class="w-full p-4 bg-slate-950/50 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-indigo-500 transition-all shadow-inner font-mono">
                 <div class="flex gap-2">
-                    <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
-                    <button onclick="clearSavedToken()" id="btnLogout" class="hidden bg-red-600/20 text-red-500 px-4 rounded-2xl border border-red-500/20 active:scale-90 transition"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white p-4 rounded-2xl font-bold text-xs transition-all active:scale-95 uppercase tracking-widest shadow-lg shadow-indigo-500/20">Hubungkan</button>
+                    <button onclick="clearSavedToken()" id="btnLogout" class="hidden bg-red-500/10 text-red-500 px-5 rounded-2xl border border-red-500/20 active:scale-90 transition-all"><i class="fa-solid fa-power-off"></i></button>
                 </div>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-4">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white appearance-none"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white appearance-none"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka & Muat Data</button>
+            <div id="selectorArea" class="hidden space-y-4 mt-6 pt-6 border-t border-white/5">
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800/50 rounded-2xl font-bold text-sm border border-slate-700 outline-none text-white transition-all focus:border-indigo-500"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800/50 rounded-2xl font-bold text-sm border border-slate-700 outline-none text-white transition-all focus:border-indigo-500"></select>
+                <button onclick="loadJsonData()" class="w-full bg-slate-100 text-slate-900 p-4 rounded-2xl font-extrabold text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">Muat Data JSON</button>
             </div>
         </div>
 
-        <div id="configEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
-            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
-                <i class="fa-solid fa-gears mr-2"></i> System Configuration
-            </h2>
-            <div id="configInputs" class="space-y-5"></div>
-            <button onclick="saveConfigData()" id="btnSaveConfig" class="w-full mt-8 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Update Config</button>
-        </div>
+        <div id="editorArea" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            
+            <div id="configSection" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-indigo-500 border border-white/5">
+                <h2 class="text-indigo-400 font-extrabold text-xs mb-6 uppercase tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> Konfigurasi Sistem
+                </h2>
+                <div id="configInputs" class="space-y-5"></div>
+                <button onclick="saveData()" id="btnSaveConfig" class="w-full mt-8 bg-indigo-600 text-white p-5 rounded-2xl font-extrabold text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all">Update Konfigurasi</button>
+            </div>
 
-        <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
-            <div id="dynamicInputs" class="space-y-4"></div>
-            <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Simpan User</button>
-                <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
+            <div id="userSection" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
+                <h2 id="formTitle" class="text-emerald-400 font-extrabold text-xs mb-6 uppercase tracking-widest">Tambah User Baru</h2>
+                <div id="userInputs" class="space-y-4"></div>
+                <div class="flex gap-3 mt-8">
+                    <button onclick="saveData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-extrabold text-xs uppercase shadow-lg active:scale-95">Simpan Data</button>
+                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Batal</button>
+                </div>
+            </div>
+
+            <div id="dataListSection" class="hidden space-y-4">
+                <div class="relative mb-6">
+                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl transition-all">
+                </div>
+                <div id="itemsContainer" class="space-y-4"></div>
             </div>
         </div>
-
-        <div id="dataArea" class="hidden">
-            <div class="relative mb-6">
-                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari data..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
-            </div>
-            <div id="userList" class="space-y-4"></div>
-        </div>
-
     </div>
 
     <script>
@@ -73,8 +83,9 @@
         const STORAGE_KEY = 'ican_github_token';
         let allData = null;
         let isArrayMode = false;
+        let editIndex = -1;
 
-        window.onload = function() {
+        window.onload = () => {
             const savedToken = localStorage.getItem(STORAGE_KEY);
             if(savedToken) {
                 document.getElementById('ghToken').value = savedToken;
@@ -83,7 +94,7 @@
         };
 
         function clearSavedToken() {
-            if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+            if(confirm("Logout dan hapus token?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
         }
 
         async function fetchAllRepos() {
@@ -101,13 +112,14 @@
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
                 document.getElementById('btnLogout').classList.remove('hidden');
-                document.getElementById('btnConnect').innerText = "TERHUBUNG";
-            } catch (e) { alert("Token Salah!"); }
+                document.getElementById('btnConnect').innerText = "TERKONEKSI";
+            } catch (e) { alert("Token tidak valid atau error koneksi."); }
         }
 
         async function fetchFiles() {
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
+            if(!repo) return;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
             });
@@ -121,200 +133,240 @@
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            if(!file) return alert("Pilih file dulu!");
+            if(!file) return alert("Pilih file terlebih dahulu!");
 
             try {
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    headers: { Authorization: `token ${token}` },
-                    cache: 'no-store'
+                    headers: { Authorization: `token ${token}` }, cache: 'no-store'
                 });
                 const data = await res.json();
                 allData = JSON.parse(atob(data.content));
-
-                // Deteksi apakah data berupa Array (User List) atau Object (Config)
-                if (Array.isArray(allData)) {
-                    isArrayMode = true;
-                    showUserPanel();
+                
+                document.getElementById('editorArea').classList.remove('hidden');
+                isArrayMode = Array.isArray(allData);
+                
+                if (isArrayMode) {
+                    showUserLayout();
                 } else {
-                    isArrayMode = false;
-                    showConfigPanel();
+                    showConfigLayout();
                 }
-            } catch (e) { alert("Gagal memuat JSON!"); }
+            } catch (e) { alert("Gagal memproses JSON."); }
         }
 
-        // --- PANEL CONFIG (Update Dialog, Version, Link) ---
-        function showConfigPanel() {
-            document.getElementById('userEditorArea').classList.add('hidden');
-            document.getElementById('dataArea').classList.add('hidden');
-            document.getElementById('configEditorArea').classList.remove('hidden');
+        // --- LAYOUT CONFIG (OBJECT) ---
+        function showConfigLayout() {
+            document.getElementById('configSection').classList.remove('hidden');
+            document.getElementById('userSection').classList.add('hidden');
+            document.getElementById('dataListSection').classList.add('hidden');
             
             const container = document.getElementById('configInputs');
             container.innerHTML = '';
-            buildConfigUI(allData, container);
+            renderRecursiveInputs(allData, container);
         }
 
-        // Fungsi Rekursif untuk membaca isi Object (biar bisa baca Update Dialog di dalam nested object)
-        function buildConfigUI(obj, container, path = '') {
+        function renderRecursiveInputs(obj, container, path = '') {
             for (let key in obj) {
                 const currentPath = path ? `${path}.${key}` : key;
                 const value = obj[key];
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col gap-1.5";
 
                 if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                    // Jika ada folder/objek di dalam objek (seperti updateDialog { version: ... })
-                    const section = document.createElement('div');
-                    section.className = "pl-2 border-l-2 border-slate-700 my-4 space-y-4";
-                    section.innerHTML = `<label class="text-[10px] text-amber-500 font-black uppercase tracking-widest block mb-2">${key}</label>`;
-                    container.appendChild(section);
-                    buildConfigUI(value, section, currentPath);
+                    // Nested Object
+                    const group = document.createElement('div');
+                    group.className = "p-4 bg-slate-800/30 rounded-3xl border border-white/5 space-y-4 my-2";
+                    group.innerHTML = `<label class="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest pl-2">${key}</label>`;
+                    container.appendChild(group);
+                    renderRecursiveInputs(value, group, currentPath);
+                } else if (Array.isArray(value)) {
+                    // Array of Objects (like socialLinks)
+                    const group = document.createElement('div');
+                    group.className = "p-4 bg-slate-950/40 rounded-3xl border border-indigo-500/20 space-y-6 my-2";
+                    group.innerHTML = `<label class="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest pl-2">${key} (List)</label>`;
+                    value.forEach((item, idx) => {
+                        const itemWrapper = document.createElement('div');
+                        itemWrapper.className = "p-3 bg-white/5 rounded-2xl space-y-3";
+                        renderRecursiveInputs(item, itemWrapper, `${currentPath}.${idx}`);
+                        group.appendChild(itemWrapper);
+                    });
+                    container.appendChild(group);
                 } else {
-                    // Input Biasa (Version, Link, Message)
-                    const wrapper = document.createElement('div');
-                    wrapper.className = "space-y-1";
-                    
+                    // Primitive values
                     let inputHtml = '';
-                    if (key.toLowerCase() === 'allowoffline') {
-                        inputHtml = `<select data-path="${currentPath}" class="config-input w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500">
-                            <option value="false" ${value == 'false' ? 'selected' : ''}>FALSE</option>
-                            <option value="true" ${value == 'true' ? 'selected' : ''}>TRUE</option>
+                    if (typeof value === 'boolean') {
+                        inputHtml = `<select data-path="${currentPath}" data-type="bool" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500">
+                            <option value="true" ${value === true ? 'selected' : ''}>TRUE</option>
+                            <option value="false" ${value === false ? 'selected' : ''}>FALSE</option>
                         </select>`;
                     } else {
-                        inputHtml = `<input type="text" data-path="${currentPath}" value="${value}" 
-                        class="config-input w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500 shadow-inner">`;
+                        inputHtml = `<input type="text" data-path="${currentPath}" value="${value}" class="data-input w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-indigo-500 shadow-inner">`;
                     }
-
-                    wrapper.innerHTML = `
-                        <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${key}</label>
-                        ${inputHtml}`;
+                    wrapper.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
                     container.appendChild(wrapper);
                 }
             }
         }
 
-        async function saveConfigData() {
-            const inputs = document.querySelectorAll('.config-input');
-            inputs.forEach(input => {
-                const path = input.getAttribute('data-path').split('.');
-                let ref = allData;
-                for (let i = 0; i < path.length - 1; i++) {
-                    ref = ref[path[i]];
-                }
-                ref[path[path.length - 1]] = input.value;
-            });
-
-            await pushToGitHub("Update System Config");
-        }
-
-        // --- PANEL USER (Sama seperti sebelumnya) ---
-        function showUserPanel() {
-            document.getElementById('configEditorArea').classList.add('hidden');
-            document.getElementById('userEditorArea').classList.remove('hidden');
-            document.getElementById('dataArea').classList.remove('hidden');
+        // --- LAYOUT USER (ARRAY) ---
+        function showUserLayout() {
+            document.getElementById('configSection').classList.add('hidden');
+            document.getElementById('userSection').classList.remove('hidden');
+            document.getElementById('dataListSection').classList.remove('hidden');
             
-            const container = document.getElementById('dynamicInputs');
-            container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
+            const container = document.getElementById('userInputs');
+            container.innerHTML = '';
             
-            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt', 'allowOffline'];
+            // Ambil struktur dari item pertama atau default
+            const template = allData.length > 0 ? allData[0] : { username: "", password: "", expiresAt: "", allowOffline: false };
             
-            fields.forEach(f => {
-                const fl = f.toLowerCase();
+            for (let key in template) {
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col gap-1.5";
                 let inputHtml = '';
-                if (fl === 'allowoffline') {
-                    inputHtml = `<select id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
+                
+                if (key.toLowerCase().includes('expires')) {
+                    inputHtml = `<input type="date" id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">`;
+                } else if (typeof template[key] === 'boolean' || key.toLowerCase().includes('allow')) {
+                    inputHtml = `<select id="user_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">
                         <option value="false">FALSE</option><option value="true">TRUE</option></select>`;
-                } else if (fl === 'expiresat') {
-                    inputHtml = `<input type="date" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
                 } else {
-                    inputHtml = `<input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
+                    inputHtml = `<input type="text" id="user_${key}" placeholder="Input ${key}..." class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500">`;
                 }
-                container.innerHTML += `<div><label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>${inputHtml}</div>`;
-            });
-            renderUserList(allData);
+                
+                wrapper.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
+                container.appendChild(wrapper);
+            }
+            renderItemsList(allData);
         }
 
-        function renderUserList(data) {
-            const list = document.getElementById('userList');
-            list.innerHTML = '';
-            data.forEach((u, i) => {
-                const displayName = u.username || u.name || u.id || u.key || `RECORD #${i+1}`;
-                let details = '';
-                Object.keys(u).forEach(key => {
-                    details += `<div class="flex justify-between border-b border-white/5 py-1">
-                        <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
-                        <span class="text-[10px] text-emerald-400 font-mono truncate pl-4">${u[key]}</span>
+        function renderItemsList(data) {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = '';
+            data.forEach((item, index) => {
+                const title = item.username || item.name || item.id || item.title || `Item #${index + 1}`;
+                let detailHtml = '';
+                for (let k in item) {
+                    detailHtml += `<div class="flex justify-between text-[10px] border-b border-white/5 py-1">
+                        <span class="text-slate-500 uppercase">${k}</span>
+                        <span class="font-mono text-emerald-400 truncate ml-4">${item[k]}</span>
                     </div>`;
-                });
-                list.innerHTML += `<div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                }
+                
+                container.innerHTML += `
+                <div class="bg-slate-900/50 p-5 rounded-[2rem] border border-white/5 shadow-xl hover:border-indigo-500/30 transition-all">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="truncate"><div class="text-[8px] text-blue-400 font-bold mb-1 uppercase tracking-widest">USER RECORD</div><div class="font-black text-white text-lg uppercase italic truncate">${displayName}</div></div>
-                        <div class="flex gap-2"><button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button></div>
-                    </div><div class="bg-black/40 p-4 rounded-2xl space-y-1">${details}</div></div>`;
+                        <div class="truncate">
+                            <span class="text-[8px] bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase font-bold tracking-tighter">Record</span>
+                            <h3 class="text-lg font-black italic uppercase tracking-tighter text-white truncate mt-1">${title}</h3>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editItem(${index})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center active:scale-90 transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem(${index})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition-all"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 p-4 rounded-2xl space-y-1">${detailHtml}</div>
+                </div>`;
             });
         }
 
-        function editMode(i) {
-            const u = allData[i];
-            document.getElementById('editIndex').value = i;
-            Object.keys(u).forEach(f => {
-                const el = document.getElementById(`field_${f}`);
-                if(el) el.value = String(u[f]);
-            });
-            document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('formTitle').innerText = "Editing: " + (u.username || "User");
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+        // --- LOGIKA SIMPAN & EDIT ---
+        async function saveData() {
+            const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
+            const originalText = btn.innerText;
+            
+            if (isArrayMode) {
+                // Mode Array (User)
+                const fields = document.querySelectorAll('.user-field');
+                let newItem = {};
+                fields.forEach(f => {
+                    const key = f.id.replace('user_', '');
+                    let val = f.value;
+                    if (val === 'true') val = true;
+                    if (val === 'false') val = false;
+                    newItem[key] = val;
+                });
+                if (editIndex > -1) allData[editIndex] = newItem;
+                else allData.push(newItem);
+            } else {
+                // Mode Object (Config)
+                const inputs = document.querySelectorAll('.data-input');
+                inputs.forEach(input => {
+                    const path = input.getAttribute('data-path').split('.');
+                    const type = input.getAttribute('data-type');
+                    let val = input.value;
+                    if (type === 'bool') val = (val === 'true');
+                    
+                    let ref = allData;
+                    for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                    ref[path[path.length - 1]] = val;
+                });
+            }
 
-        async function saveUserData() {
-            const index = parseInt(document.getElementById('editIndex').value);
-            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select');
-            let newUser = {};
-            fields.forEach(f => newUser[f.id.replace('field_', '')] = f.value);
-            if(index === -1) allData.push(newUser); else allData[index] = newUser;
-            await pushToGitHub(index === -1 ? "Add User" : "Update User");
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Memproses...`;
+            
+            await pushToGitHub(isArrayMode ? "Update List Data" : "Update System Config");
+            
+            btn.disabled = false;
+            btn.innerText = originalText;
             resetForm();
-        }
-
-        function resetForm() {
-            document.getElementById('editIndex').value = "-1";
-            document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select').forEach(i => i.value = '');
-            document.getElementById('btnCancel').classList.add('hidden');
-        }
-
-        async function deleteUser(i) {
-            if(confirm("Hapus data ini?")) { allData.splice(i, 1); await pushToGitHub("Delete User"); }
         }
 
         async function pushToGitHub(msg) {
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
-            btn.disabled = true; btn.innerText = "SAVING...";
-
             try {
                 const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                const dataSha = await resSha.json();
+                const shaData = await resSha.json();
                 const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     method: 'PUT',
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: msg,
                         content: btoa(JSON.stringify(allData, null, 2)),
-                        sha: dataSha.sha
+                        sha: shaData.sha
                     })
                 });
-                if(res.ok) alert("Data Berhasil Diperbarui!");
+                if(res.ok) alert("Berhasil disimpan ke GitHub!");
                 loadJsonData();
-            } catch (e) { alert("Gagal Simpan!"); }
-            finally { btn.disabled = false; btn.innerText = isArrayMode ? "Simpan User" : "Update Config"; }
+            } catch (e) { alert("Gagal menyimpan ke GitHub."); }
+        }
+
+        function editItem(index) {
+            editIndex = index;
+            const item = allData[index];
+            for (let k in item) {
+                const el = document.getElementById(`user_${k}`);
+                if (el) el.value = String(item[k]);
+            }
+            document.getElementById('formTitle').innerText = "Edit Data: " + (item.username || "Item");
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo({top: 200, behavior: 'smooth'});
+        }
+
+        function deleteItem(index) {
+            if (confirm("Hapus data ini secara permanen?")) {
+                allData.splice(index, 1);
+                pushToGitHub("Delete Item Record");
+            }
+        }
+
+        function resetForm() {
+            editIndex = -1;
+            document.querySelectorAll('.user-field').forEach(f => f.value = '');
+            document.getElementById('formTitle').innerText = "Tambah User Baru";
+            document.getElementById('btnCancel').classList.add('hidden');
         }
 
         function filterData() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allData.filter(u => Object.values(u).some(v => String(v).toLowerCase().includes(q)));
-            renderUserList(filtered);
+            const filtered = allData.filter(item => 
+                Object.values(item).some(val => String(val).toLowerCase().includes(q))
+            );
+            renderItemsList(filtered);
         }
     </script>
 </body>
