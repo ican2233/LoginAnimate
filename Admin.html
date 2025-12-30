@@ -128,20 +128,18 @@
             showUserPanel();
         }
 
-        // --- UPDATE LOGIKA SMART INPUTS ---
         function showUserPanel() {
             document.getElementById('editorArea').classList.remove('hidden');
             document.getElementById('dataArea').classList.remove('hidden');
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
             
-            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt', 'allowOffline'];
+            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'name', 'password', 'expiresAt', 'allowOffline'];
             
             fields.forEach(f => {
                 const fieldLower = f.toLowerCase();
                 let inputHtml = '';
 
-                // 1. Logika untuk allowOffline (Dropdown)
                 if (fieldLower === 'allowoffline') {
                     inputHtml = `
                         <select id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
@@ -149,11 +147,9 @@
                             <option value="true">TRUE (Allow Offline)</option>
                         </select>`;
                 } 
-                // 2. Logika untuk expiresAt (Date Picker)
                 else if (fieldLower === 'expiresat') {
                     inputHtml = `<input type="date" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
                 } 
-                // 3. Logika untuk field lainnya (Text)
                 else {
                     inputHtml = `<input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
                 }
@@ -167,10 +163,14 @@
             renderUserList(allData);
         }
 
+        // --- LOGIKA CERDAS UNTUK LABEL NAMA ---
         function renderUserList(data) {
             const list = document.getElementById('userList');
             list.innerHTML = '';
             data.forEach((u, i) => {
+                // Mencari kunci yang paling pas untuk dijadikan judul card
+                const displayName = u.username || u.name || u.id || u.key || `USER #${i+1}`;
+                
                 let details = '';
                 Object.keys(u).forEach(key => {
                     let valStyle = "text-emerald-400";
@@ -186,11 +186,11 @@
                 list.innerHTML += `
                     <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in duration-300">
                         <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">USER #${i+1}</div>
-                                <div class="font-black text-white text-lg uppercase italic">${u.username || 'UNNAMED'}</div>
+                            <div class="truncate">
+                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">RECORD #${i+1}</div>
+                                <div class="font-black text-white text-lg uppercase italic tracking-tighter truncate">${displayName}</div>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 flex-shrink-0">
                                 <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
@@ -206,29 +206,24 @@
             Object.keys(u).forEach(f => {
                 const el = document.getElementById(`field_${f}`);
                 if(el) {
-                    // Pastikan value string dikonversi jika perlu (untuk select)
                     el.value = String(u[f]);
                 }
             });
             document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('formTitle').innerText = "Edit: " + (u.username || "User");
+            const displayName = u.username || u.name || u.id || u.key || "User";
+            document.getElementById('formTitle').innerText = "Edit: " + displayName;
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         async function saveUserData() {
             const index = parseInt(document.getElementById('editIndex').value);
             const container = document.getElementById('dynamicInputs');
-            // Ambil semua field termasuk input dan select
             const fields = container.querySelectorAll('input:not([type="hidden"]), select');
             
             let newUser = {};
             fields.forEach(field => {
                 const fieldName = field.id.replace('field_', '');
-                let value = field.value;
-                
-                // Konversi string "true"/"false" kembali ke boolean jika Anda mau (opsional)
-                // Di sini saya biarkan string agar konsisten dengan GitHub JSON
-                newUser[fieldName] = value;
+                newUser[fieldName] = field.value;
             });
 
             if(index === -1) allData.push(newUser); else allData[index] = newUser;
