@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Admin Ican2233 - Date Picker Mode</title>
+    <title>Ultimate Admin Ican2233 - Smart Inputs</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Mengatur tampilan date picker agar serasi dengan tema dark */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
+        }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
     </style>
 </head>
@@ -31,19 +40,12 @@
                     <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
                     <button onclick="clearSavedToken()" id="btnLogout" class="hidden bg-red-600/20 text-red-500 px-4 rounded-2xl border border-red-500/20 active:scale-90 transition"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
-                <p id="statusInfo" class="text-[10px] text-center mt-3 text-slate-500"></p>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
-                <div class="space-y-1">
-                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih Repository</label>
-                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white appearance-none"></select>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih File Database (JSON)</label>
-                    <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500 text-white appearance-none"></select>
-                </div>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka & Muat Data</button>
+            <div id="selectorArea" class="hidden space-y-4 mt-4">
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none text-white"></select>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Buka & Muat Data</button>
             </div>
         </div>
 
@@ -51,7 +53,7 @@
             <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
             <div id="dynamicInputs" class="space-y-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 transition shadow-lg active:scale-95">Simpan User</button>
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Simpan User</button>
                 <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
@@ -79,13 +81,10 @@
         };
 
         function clearSavedToken() {
-            if(confirm("Logout dan hapus token?")) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
+            if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
         }
 
-        async function fetchAllRepos(isAuto = false) {
+        async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
             if(!token) return;
             try {
@@ -129,26 +128,40 @@
             showUserPanel();
         }
 
-        // --- BAGIAN UPDATE DATE PICKER ---
+        // --- UPDATE LOGIKA SMART INPUTS ---
         function showUserPanel() {
             document.getElementById('editorArea').classList.remove('hidden');
             document.getElementById('dataArea').classList.remove('hidden');
             const container = document.getElementById('dynamicInputs');
             container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
             
-            // Mengambil field dari data pertama atau default
-            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt'];
+            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt', 'allowOffline'];
             
             fields.forEach(f => {
-                // DETEKSI FIELD EXPIRESAT
-                const isDate = f.toLowerCase() === 'expiresat';
-                const inputType = isDate ? 'date' : 'text';
+                const fieldLower = f.toLowerCase();
+                let inputHtml = '';
+
+                // 1. Logika untuk allowOffline (Dropdown)
+                if (fieldLower === 'allowoffline') {
+                    inputHtml = `
+                        <select id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
+                            <option value="false">FALSE (Online Only)</option>
+                            <option value="true">TRUE (Allow Offline)</option>
+                        </select>`;
+                } 
+                // 2. Logika untuk expiresAt (Date Picker)
+                else if (fieldLower === 'expiresat') {
+                    inputHtml = `<input type="date" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
+                } 
+                // 3. Logika untuk field lainnya (Text)
+                else {
+                    inputHtml = `<input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">`;
+                }
 
                 container.innerHTML += `
                     <div>
                         <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>
-                        <input type="${inputType}" id="field_${f}" 
-                        class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
+                        ${inputHtml}
                     </div>`;
             });
             renderUserList(allData);
@@ -160,22 +173,26 @@
             data.forEach((u, i) => {
                 let details = '';
                 Object.keys(u).forEach(key => {
+                    let valStyle = "text-emerald-400";
+                    if(u[key] === "false" || u[key] === false) valStyle = "text-red-400";
+                    if(u[key] === "true" || u[key] === true) valStyle = "text-blue-400";
+
                     details += `
                         <div class="flex justify-between items-center border-b border-white/5 py-1">
                             <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
-                            <span class="text-[10px] text-emerald-400 font-mono">${u[key] || '-'}</span>
+                            <span class="text-[10px] ${valStyle} font-mono">${u[key]}</span>
                         </div>`;
                 });
                 list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in duration-300">
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">USER #${i+1}</div>
                                 <div class="font-black text-white text-lg uppercase italic">${u.username || 'UNNAMED'}</div>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                         <div class="bg-black/40 p-4 rounded-2xl space-y-1">${details}</div>
@@ -188,7 +205,10 @@
             document.getElementById('editIndex').value = i;
             Object.keys(u).forEach(f => {
                 const el = document.getElementById(`field_${f}`);
-                if(el) el.value = u[f];
+                if(el) {
+                    // Pastikan value string dikonversi jika perlu (untuk select)
+                    el.value = String(u[f]);
+                }
             });
             document.getElementById('btnCancel').classList.remove('hidden');
             document.getElementById('formTitle').innerText = "Edit: " + (u.username || "User");
@@ -197,10 +217,18 @@
 
         async function saveUserData() {
             const index = parseInt(document.getElementById('editIndex').value);
-            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"])');
+            const container = document.getElementById('dynamicInputs');
+            // Ambil semua field termasuk input dan select
+            const fields = container.querySelectorAll('input:not([type="hidden"]), select');
+            
             let newUser = {};
-            fields.forEach(input => {
-                newUser[input.id.replace('field_', '')] = input.value;
+            fields.forEach(field => {
+                const fieldName = field.id.replace('field_', '');
+                let value = field.value;
+                
+                // Konversi string "true"/"false" kembali ke boolean jika Anda mau (opsional)
+                // Di sini saya biarkan string agar konsisten dengan GitHub JSON
+                newUser[fieldName] = value;
             });
 
             if(index === -1) allData.push(newUser); else allData[index] = newUser;
@@ -210,7 +238,8 @@
 
         function resetForm() {
             document.getElementById('editIndex').value = "-1";
-            document.querySelectorAll('#dynamicInputs input:not([type="hidden"])').forEach(i => i.value = '');
+            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"]), #dynamicInputs select');
+            fields.forEach(f => f.value = (f.tagName === 'SELECT' ? 'false' : ''));
             document.getElementById('btnCancel').classList.add('hidden');
             document.getElementById('formTitle').innerText = "Manajemen User";
         }
@@ -225,6 +254,8 @@
             const token = localStorage.getItem(STORAGE_KEY);
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
+            const btn = document.getElementById('btnSaveUser');
+            btn.disabled = true; btn.innerText = "SAVING...";
             try {
                 const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     headers: { Authorization: `token ${token}` }
@@ -242,6 +273,7 @@
                 alert("Berhasil!");
                 loadJsonData();
             } catch (e) { alert("Gagal!"); }
+            finally { btn.disabled = false; btn.innerText = "Simpan User"; }
         }
 
         function filterData() {
