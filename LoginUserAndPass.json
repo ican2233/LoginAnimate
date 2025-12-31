@@ -1,23 +1,30 @@
-[
-  {
-    "id": "f1a4630955d35e88",
-    "username": "ican",
-    "password": "ican",
-    "expiresAt": "2025-12-30",
-    "allowOffline": true
+{
+  "info": {
+    "title": "INFORMATION",
+    "message": "Yang Tampan Cuman Bos Ican ... Bukan Yang Laen ... Yang Laen Hanya Plagiat ....",
+    "is_active": true
   },
-  {
-    "id": "a793b723e87a4e99",
-    "username": "user1",
-    "password": "user1",
-    "expiresAt": "2026-01-28",
-    "allowOffline": "true"
-  },
-  {
-    "id": "android_device_id_2",
-    "username": "user2",
-    "password": "pass2",
-    "expiresAt": "2025-11-30",
-    "allowOffline": false
-  }
-]
+  "accounts": [
+    {
+      "id": "f1a4630955d35e88",
+      "username": "ican",
+      "password": "ican",
+      "expiresAt": "2025-12-30",
+      "allowOffline": true
+    },
+    {
+      "id": "a793b723e87a4e99",
+      "username": "user1",
+      "password": "user1",
+      "expiresAt": "2026-01-28",
+      "allowOffline": true
+    },
+    {
+      "id": "android_device_id_2",
+      "username": "user2",
+      "password": "pass2",
+      "expiresAt": "2025-11-30",
+      "allowOffline": false
+    }
+  ]
+}
