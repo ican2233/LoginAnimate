@@ -3,64 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Ican2233 - Fixed Manager</title>
+    <title>Dynamic Config Manager - Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-        select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em;
-            -webkit-appearance: none; appearance: none;
-        }
-        .user-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .user-card:hover { transform: translateY(-4px); border-color: rgba(99, 102, 241, 0.4); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        input, select, textarea { transition: all 0.2s ease-in-out; }
+        input:focus, select:focus, textarea:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-[#0b0f1a] min-h-screen pb-20 text-slate-200">
 
-    <div class="bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-950 p-10 shadow-2xl mb-8 rounded-b-[3.5rem] border-b border-white/10 text-center">
-        <h1 class="text-3xl font-extrabold tracking-tighter italic text-white uppercase drop-shadow-lg">Super Control Panel</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.5em] uppercase mt-2 text-blue-200 font-bold">Ican2233 Global Manager</p>
+    <div class="bg-indigo-600 p-6 shadow-2xl mb-6 rounded-b-[2.5rem] text-center border-b border-white/10">
+        <h1 class="text-xl font-black tracking-tighter text-white uppercase italic">System Management</h1>
+        <p id="activeRepoText" class="text-[9px] opacity-70 tracking-[0.3em] uppercase mt-1 text-indigo-100">Ican2233 Cloud Database</p>
     </div>
 
-    <div class="max-w-md mx-auto px-5">
+    <div class="max-w-md mx-auto px-4">
         
-        <div class="bg-slate-900/60 backdrop-blur-xl p-6 rounded-[2.5rem] border border-white/5 mb-6 shadow-2xl">
+        <div class="glass-card p-6 rounded-[2rem] mb-6 shadow-xl">
             <div id="loginArea">
-                <label class="text-[10px] text-blue-400 font-extrabold uppercase tracking-widest ml-3 mb-2 block">GitHub Token</label>
-                <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" class="w-full p-4 bg-slate-950/50 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition-all font-mono">
-                <div class="flex gap-2">
-                    <button onclick="fetchAllRepos()" id="btnConnect" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-bold text-xs transition-all active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan</button>
-                    <button onclick="clearSavedToken()" id="btnLogout" class="hidden bg-red-500/10 text-red-500 px-5 rounded-2xl border border-red-500/20 active:scale-90 transition-all"><i class="fa-solid fa-power-off"></i></button>
-                </div>
+                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 font-mono">
+                <button onclick="fetchAllRepos()" id="btnConnect" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">Connect to GitHub</button>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-6 pt-6 border-t border-white/5">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800/80 rounded-2xl font-bold text-sm border border-slate-700 outline-none text-white"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800/80 rounded-2xl font-bold text-sm border border-slate-700 outline-none text-white"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-extrabold text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all">Muat & Sinkronkan Data</button>
+            <div id="selectorArea" class="hidden space-y-4 mt-4 pt-4 border-t border-white/5">
+                <div class="space-y-1">
+                    <label class="text-[10px] text-slate-500 font-bold ml-2 uppercase">Repository</label>
+                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-700 outline-none appearance-none"></select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] text-slate-500 font-bold ml-2 uppercase">File JSON</label>
+                    <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-700 outline-none appearance-none"></select>
+                </div>
+                <button onclick="loadJsonData()" class="w-full bg-white text-indigo-900 p-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 active:scale-95 transition-all">Open Editor</button>
             </div>
         </div>
 
         <div id="editorArea" class="hidden">
-            <div id="userSection" class="bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-                <h2 id="formTitle" class="text-emerald-400 font-extrabold text-xs mb-6 uppercase tracking-widest flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i> Manajemen Data
-                </h2>
-                <div id="userInputs" class="space-y-4"></div>
-                <div class="flex gap-3 mt-8">
-                    <button onclick="saveData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-extrabold text-xs uppercase shadow-lg active:scale-95">Simpan Data</button>
-                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Batal</button>
+            
+            <div class="glass-card p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-4 border-indigo-500">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="formTitle" class="text-indigo-400 font-black text-xs uppercase tracking-widest">Editor</h2>
+                    <span id="dataTypeBadge" class="text-[8px] bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-md font-bold uppercase">Object</span>
+                </div>
+                
+                <div id="dynamicInputs" class="space-y-5">
+                    </div>
+                
+                <div class="flex gap-3 mt-10">
+                    <button onclick="saveChanges()" id="btnSave" class="flex-1 bg-indigo-600 text-white p-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-indigo-500 active:scale-95">Save Changes</button>
+                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Cancel</button>
                 </div>
             </div>
 
-            <div id="dataListSection" class="space-y-4">
-                <div class="relative mb-6">
+            <div id="listSection" class="hidden space-y-4">
+                <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari username atau data..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition-all">
+                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search data..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl">
                 </div>
                 <div id="itemsContainer" class="space-y-4"></div>
             </div>
@@ -69,21 +72,18 @@
 
     <script>
         const OWNER = 'Ican2233';
-        const STORAGE_KEY = 'ican_github_token';
-        let allData = [];
+        let allData = null;
+        let isArray = false;
         let editIndex = -1;
 
+        // Init
         window.onload = () => {
-            const savedToken = localStorage.getItem(STORAGE_KEY);
-            if(savedToken) {
-                document.getElementById('ghToken').value = savedToken;
+            const token = localStorage.getItem('ican_token');
+            if(token) {
+                document.getElementById('ghToken').value = token;
                 fetchAllRepos();
             }
         };
-
-        function clearSavedToken() {
-            if(confirm("Logout?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
-        }
 
         async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
@@ -92,189 +92,208 @@
                     headers: { Authorization: `token ${token}` }
                 });
                 const repos = await res.json();
-                localStorage.setItem(STORAGE_KEY, token);
+                localStorage.setItem('ican_token', token);
                 const select = document.getElementById('repoSelect');
-                select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
+                select.innerHTML = '<option value="">-- SELECT REPO --</option>';
                 repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                 document.getElementById('selectorArea').classList.remove('hidden');
-                document.getElementById('btnLogout').classList.remove('hidden');
-                document.getElementById('btnConnect').innerText = "TERKONEKSI";
-            } catch (e) { alert("Token Salah atau Limit API Habis."); }
+                document.getElementById('loginArea').classList.add('hidden');
+            } catch (e) { alert("Invalid Token"); }
         }
 
         async function fetchFiles() {
-            const token = localStorage.getItem(STORAGE_KEY);
+            const token = localStorage.getItem('ican_token');
             const repo = document.getElementById('repoSelect').value;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
             });
             const files = await res.json();
             const select = document.getElementById('fileSelect');
-            select.innerHTML = '<option value="">-- PILIH FILE JSON --</option>';
+            select.innerHTML = '<option value="">-- SELECT JSON FILE --</option>';
             files.filter(f => f.name.endsWith('.json')).forEach(f => select.innerHTML += `<option value="${f.name}">${f.name}</option>`);
         }
 
         async function loadJsonData() {
-            const token = localStorage.getItem(STORAGE_KEY);
+            const token = localStorage.getItem('ican_token');
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            if(!file) return;
-
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 headers: { Authorization: `token ${token}` }, cache: 'no-store'
             });
             const data = await res.json();
-            const content = JSON.parse(atob(data.content));
-            
-            // Pastikan data selalu dalam bentuk Array (untuk daftar user)
-            allData = Array.isArray(content) ? content : (content.users || []);
-            
+            allData = JSON.parse(atob(data.content));
+            isArray = Array.isArray(allData);
+
             document.getElementById('editorArea').classList.remove('hidden');
-            buildUserForm();
-            renderItemsList(allData);
+            document.getElementById('dataTypeBadge').innerText = isArray ? "Array / User List" : "Single Config";
+            
+            if(isArray) {
+                document.getElementById('listSection').classList.remove('hidden');
+                renderUserForm();
+                renderList(allData);
+            } else {
+                document.getElementById('listSection').classList.add('hidden');
+                renderConfigForm(allData);
+            }
         }
 
-        function buildUserForm() {
-            const container = document.getElementById('userInputs');
-            container.innerHTML = '';
-            
-            // Ambil semua key unik dari seluruh user (supaya tidak ada field yang hilang)
-            let keys = new Set(['id', 'username', 'password', 'expiresAt', 'allowOffline']);
-            allData.forEach(item => Object.keys(item).forEach(k => keys.add(k)));
-            
-            keys.forEach(key => {
-                const div = document.createElement('div');
-                div.className = "flex flex-col gap-1.5";
-                let inputHtml = '';
+        // --- RENDER UNTUK SINGLE CONFIG (Object) ---
+        function renderConfigForm(obj, container = null, path = '') {
+            const mainContainer = container || document.getElementById('dynamicInputs');
+            if(!container) mainContainer.innerHTML = '';
 
-                // PAKSA Pilihan TRUE/FALSE untuk field 'allowOffline'
-                if (key.toLowerCase().includes('allowoffline')) {
-                    inputHtml = `<select id="field_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-white">
-                        <option value="false">FALSE (Online Only)</option>
-                        <option value="true">TRUE (Bisa Offline)</option>
-                    </select>`;
-                } else if (key.toLowerCase().includes('expires')) {
-                    inputHtml = `<input type="date" id="field_${key}" class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-white">`;
+            for (let key in obj) {
+                const currentPath = path ? `${path}.${key}` : key;
+                const value = obj[key];
+
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    const group = document.createElement('div');
+                    group.className = "p-4 bg-white/5 rounded-3xl border border-white/5 space-y-4 my-2";
+                    group.innerHTML = `<label class="text-[10px] text-indigo-400 font-black uppercase tracking-widest pl-2">${key}</label>`;
+                    mainContainer.appendChild(group);
+                    renderConfigForm(value, group, currentPath);
                 } else {
-                    inputHtml = `<input type="text" id="field_${key}" placeholder="Isi ${key}..." class="user-field w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-white">`;
+                    mainContainer.appendChild(createField(key, value, currentPath, 'config-field'));
                 }
-
-                div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${inputHtml}`;
-                container.appendChild(div);
-            });
+            }
         }
 
-        function renderItemsList(data) {
+        // --- RENDER UNTUK USER LIST (Array) ---
+        function renderUserForm() {
+            const container = document.getElementById('dynamicInputs');
+            container.innerHTML = '';
+            // Ambil template dari data pertama agar fieldnya sinkron
+            const template = allData.length > 0 ? allData[0] : { id: "", username: "", password: "", expiresAt: "", allowOffline: false };
+            for(let key in template) {
+                container.appendChild(createField(key, '', key, 'user-field'));
+            }
+        }
+
+        // --- HELPER BUAT FIELD INPUT ---
+        function createField(key, value, path, className) {
+            const div = document.createElement('div');
+            div.className = "flex flex-col gap-1.5";
+            let input = '';
+            
+            const isBool = typeof value === 'boolean' || key.toLowerCase().includes('allowoffline') || key.toLowerCase() === 'enabled' || key.toLowerCase() === 'mandatory';
+            
+            if (isBool) {
+                input = `<select data-path="${path}" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">
+                            <option value="false" ${value === false ? 'selected' : ''}>FALSE</option>
+                            <option value="true" ${value === true ? 'selected' : ''}>TRUE</option>
+                        </select>`;
+            } else if (key === 'message' || key === 'description') {
+                input = `<textarea data-path="${path}" rows="3" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">${value}</textarea>`;
+            } else {
+                const type = key.toLowerCase().includes('date') || key.toLowerCase().includes('expires') ? 'date' : 'text';
+                input = `<input type="${type}" data-path="${path}" value="${value}" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">`;
+            }
+
+            div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${input}`;
+            return div;
+        }
+
+        // --- RENDER LIST KARTU ---
+        function renderList(data) {
             const container = document.getElementById('itemsContainer');
             container.innerHTML = '';
-            
-            data.forEach((item) => {
-                const originalIndex = allData.indexOf(item);
-                const title = item.username || item.name || item.id || `USER #${originalIndex + 1}`;
-                
+            data.forEach((item, index) => {
+                const originalIdx = allData.indexOf(item);
                 let details = '';
-                for (let k in item) {
-                    let valColor = "text-emerald-400";
-                    if(item[k] === false || item[k] === "false") valColor = "text-red-400";
-                    if(item[k] === true || item[k] === "true") valColor = "text-blue-400";
-                    
-                    details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5">
-                        <span class="text-slate-500 uppercase">${k}</span>
-                        <span class="${valColor} font-mono truncate ml-4">${item[k]}</span>
-                    </div>`;
-                }
-
+                for(let k in item) details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span class="text-slate-500 uppercase">${k}</span><span class="text-indigo-300 font-mono truncate ml-4">${item[k]}</span></div>`;
+                
                 container.innerHTML += `
-                <div class="user-card bg-slate-900/50 p-5 rounded-[2rem] border border-white/5 shadow-xl">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="truncate">
-                            <span class="text-[8px] bg-slate-700 text-white px-2 py-0.5 rounded-full uppercase font-bold">UID: ${originalIndex}</span>
-                            <h3 class="text-lg font-black italic uppercase tracking-tighter text-white truncate mt-1">${title}</h3>
-                        </div>
+                <div class="glass-card p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="truncate"><h3 class="text-lg font-black text-white italic uppercase">${item.username || item.name || 'USER'}</h3></div>
                         <div class="flex gap-2">
-                            <button onclick="editItem(${originalIndex})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteItem(${originalIndex})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="editItem(${originalIdx})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteItem(${originalIdx})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
-                    <div class="bg-black/30 p-4 rounded-2xl space-y-1">${details}</div>
+                    <div class="bg-black/20 p-4 rounded-2xl">${details}</div>
                 </div>`;
             });
+        }
+
+        // --- LOGIKA SIMPAN ---
+        async function saveChanges() {
+            const btn = document.getElementById('btnSave');
+            btn.disabled = true; btn.innerText = "SAVING...";
+
+            if (isArray) {
+                let newItem = {};
+                document.querySelectorAll('.user-field').forEach(f => {
+                    const key = f.getAttribute('data-path');
+                    let val = f.value;
+                    if(val === 'true') val = true; else if(val === 'false') val = false;
+                    newItem[key] = val;
+                });
+                if(editIndex > -1) allData[editIndex] = newItem; else allData.push(newItem);
+            } else {
+                document.querySelectorAll('.config-field').forEach(f => {
+                    const path = f.getAttribute('data-path').split('.');
+                    let val = f.value;
+                    if(val === 'true') val = true; else if(val === 'false') val = false;
+                    
+                    let ref = allData;
+                    for(let i=0; i < path.length - 1; i++) ref = ref[path[i]];
+                    ref[path[path.length - 1]] = val;
+                });
+            }
+
+            await pushToGitHub();
+            btn.disabled = false; btn.innerText = "SAVE CHANGES";
+            resetForm();
+        }
+
+        async function pushToGitHub() {
+            const token = localStorage.getItem('ican_token');
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
+            const shaData = await resSha.json();
+            
+            await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                method: 'PUT',
+                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: "Update via Manager",
+                    content: btoa(JSON.stringify(allData, null, 2)),
+                    sha: shaData.sha
+                })
+            });
+            alert("Updated Successfully!");
+            loadJsonData();
         }
 
         function editItem(idx) {
             editIndex = idx;
             const item = allData[idx];
             document.querySelectorAll('.user-field').forEach(f => {
-                const key = f.id.replace('field_', '');
-                f.value = item[key] !== undefined ? String(item[key]) : (f.tagName === 'SELECT' ? 'false' : '');
+                const key = f.getAttribute('data-path');
+                f.value = String(item[key] || '');
             });
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> Edit: ${item.username || 'User'}`;
             document.getElementById('btnCancel').classList.remove('hidden');
-            window.scrollTo({top: 250, behavior: 'smooth'});
-        }
-
-        async function saveData() {
-            const btn = document.getElementById('btnSaveUser');
-            let newItem = {};
-            
-            document.querySelectorAll('.user-field').forEach(f => {
-                const key = f.id.replace('field_', '');
-                let val = f.value;
-                // Pastikan tipe data boolean tersimpan dengan benar
-                if (val === 'true') val = true;
-                else if (val === 'false') val = false;
-                newItem[key] = val;
-            });
-
-            if (editIndex > -1) allData[editIndex] = newItem; else allData.push(newItem);
-            
-            btn.disabled = true; btn.innerText = "SINKRONISASI...";
-            await pushToGitHub();
-            btn.disabled = false; btn.innerText = "SIMPAN DATA";
-            resetForm();
-        }
-
-        async function pushToGitHub() {
-            const token = localStorage.getItem(STORAGE_KEY);
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            try {
-                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
-                const shaData = await resSha.json();
-                await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                    method: 'PUT',
-                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: "Admin Update Lockpass", 
-                        content: btoa(JSON.stringify(allData, null, 2)), 
-                        sha: shaData.sha 
-                    })
-                });
-                alert("Berhasil disinkronkan ke GitHub!");
-                loadJsonData(); // Refresh list
-            } catch (e) { alert("Gagal Simpan."); }
+            document.getElementById('formTitle').innerText = "Edit Mode";
+            window.scrollTo({top: 400, behavior: 'smooth'});
         }
 
         function deleteItem(idx) {
-            if(confirm("Hapus data user ini?")) {
-                allData.splice(idx, 1);
-                pushToGitHub();
-            }
+            if(confirm("Delete this record?")) { allData.splice(idx, 1); pushToGitHub(); }
         }
 
         function resetForm() {
             editIndex = -1;
-            document.querySelectorAll('.user-field').forEach(f => f.value = (f.tagName === 'SELECT' ? 'false' : ''));
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> Manajemen Data`;
+            document.querySelectorAll('.user-field').forEach(f => f.value = '');
             document.getElementById('btnCancel').classList.add('hidden');
+            document.getElementById('formTitle').innerText = "Editor";
         }
 
         function filterData() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allData.filter(item => 
-                Object.values(item).some(v => String(v).toLowerCase().includes(q))
-            );
-            renderItemsList(filtered);
+            const filtered = allData.filter(item => Object.values(item).some(v => String(v).toLowerCase().includes(q)));
+            renderList(filtered);
         }
     </script>
 </body>
