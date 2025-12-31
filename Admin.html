@@ -3,297 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Config Manager - Ican2233</title>
+    <title>Ultimate Manager - Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
-        input, select, textarea { transition: all 0.2s ease-in-out; }
-        input:focus, select:focus, textarea:focus { border-color: #6366f1 !important; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f1a; color: #e2e8f0; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .input-focus:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
+        select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em; }
     </style>
 </head>
-<body class="bg-[#0b0f1a] min-h-screen pb-20 text-slate-200">
+<body class="min-h-screen pb-20">
 
-    <div class="bg-indigo-600 p-6 shadow-2xl mb-6 rounded-b-[2.5rem] text-center border-b border-white/10">
-        <h1 class="text-xl font-black tracking-tighter text-white uppercase italic">System Management</h1>
-        <p id="activeRepoText" class="text-[9px] opacity-70 tracking-[0.3em] uppercase mt-1 text-indigo-100">TKS TEAM Database</p>
+    <div class="bg-indigo-600 p-8 shadow-2xl mb-8 rounded-b-[3rem] text-center border-b border-white/10">
+        <h1 class="text-2xl font-black tracking-tighter text-white uppercase italic">Global System Editor</h1>
+        <p id="statusPath" class="text-[9px] opacity-70 tracking-[0.3em] uppercase mt-2 text-indigo-100">Ready to Connect</p>
     </div>
 
-    <div class="max-w-md mx-auto px-4">
+    <div class="max-w-md mx-auto px-5">
         
-        <div class="glass-card p-6 rounded-[2rem] mb-6 shadow-xl">
-            <div id="loginArea">
-                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 font-mono">
-                <button onclick="fetchAllRepos()" id="btnConnect" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">Connect to GitHub</button>
+        <div class="glass p-6 rounded-[2.5rem] mb-6 shadow-xl">
+            <div id="authArea">
+                <label class="text-[10px] text-indigo-400 font-bold uppercase ml-2 mb-2 block">GitHub Personal Token</label>
+                <input type="password" id="ghToken" placeholder="ghp_..." class="w-full p-4 bg-black/30 border border-slate-700 rounded-2xl mb-4 outline-none text-emerald-400 font-mono text-sm">
+                <button onclick="connectGitHub()" id="btnConnect" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95">Connect Account</button>
             </div>
 
-            <div id="selectorArea" class="hidden space-y-4 mt-4 pt-4 border-t border-white/5">
-                <div class="space-y-1">
-                    <label class="text-[10px] text-slate-500 font-bold ml-2 uppercase">Repository</label>
-                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-700 outline-none appearance-none"></select>
+            <div id="pickerArea" class="hidden space-y-4">
+                <div>
+                    <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">Select Repository</label>
+                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800/50 border border-slate-700 rounded-2xl text-sm font-bold outline-none mt-1"></select>
                 </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] text-slate-500 font-bold ml-2 uppercase">File JSON</label>
-                    <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-700 outline-none appearance-none"></select>
+                <div>
+                    <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">Select JSON File</label>
+                    <select id="fileSelect" class="w-full p-4 bg-slate-800/50 border border-slate-700 rounded-2xl text-sm font-bold outline-none mt-1"></select>
                 </div>
-                <button onclick="loadJsonData()" class="w-full bg-white text-indigo-900 p-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-100 active:scale-95 transition-all">Open Editor</button>
+                <button onclick="loadContent()" class="w-full bg-white text-indigo-900 p-4 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all">Open Editor</button>
             </div>
         </div>
 
-        <div id="editorArea" class="hidden">
-            
-            <div class="glass-card p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-4 border-indigo-500">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 id="formTitle" class="text-indigo-400 font-black text-xs uppercase tracking-widest">Editor</h2>
-                    <span id="dataTypeBadge" class="text-[8px] bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-md font-bold uppercase">Object</span>
+        <div id="editorPanel" class="hidden animate-in fade-in duration-500">
+            <div class="glass p-6 rounded-[2.5rem] shadow-2xl border-t-4 border-indigo-500 mb-8">
+                <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                    <h2 id="editorTitle" class="text-indigo-400 font-black text-xs uppercase tracking-widest">Editor</h2>
+                    <span id="typeTag" class="text-[8px] bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded font-bold uppercase">Object</span>
                 </div>
-                
-                <div id="dynamicInputs" class="space-y-5">
-                    </div>
-                
+
+                <div id="formFields" class="space-y-5"></div>
+
                 <div class="flex gap-3 mt-10">
-                    <button onclick="saveChanges()" id="btnSave" class="flex-1 bg-indigo-600 text-white p-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-indigo-500 active:scale-95">Save Changes</button>
-                    <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Cancel</button>
+                    <button onclick="pushUpdate()" id="btnSave" class="flex-1 bg-indigo-600 text-white p-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95">Push to GitHub</button>
+                    <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Cancel</button>
                 </div>
             </div>
 
-            <div id="listSection" class="hidden space-y-4">
-                <div class="relative">
+            <div id="listPanel" class="hidden space-y-4">
+                <div class="relative mb-6">
                     <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                    <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Search data..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl">
+                    <input type="text" id="searchBar" onkeyup="filterList()" placeholder="Quick search..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl">
                 </div>
-                <div id="itemsContainer" class="space-y-4"></div>
+                <div id="cardContainer" class="space-y-4"></div>
             </div>
         </div>
     </div>
 
     <script>
-        const OWNER = 'Ican2233';
+        let OWNER = 'Ican2233';
         let allData = null;
-        let isArray = false;
-        let editIndex = -1;
+        let isArrayMode = false;
+        let currentEditIdx = -1;
 
-        // Init
-        window.onload = () => {
-            const token = localStorage.getItem('ican_token');
-            if(token) {
-                document.getElementById('ghToken').value = token;
-                fetchAllRepos();
-            }
-        };
-
-        async function fetchAllRepos() {
+        // --- AUTH & FETCH ---
+        async function connectGitHub() {
             const token = document.getElementById('ghToken').value;
             try {
-                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
+                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
+                if(!res.ok) throw new Error();
                 const repos = await res.json();
-                localStorage.setItem('ican_token', token);
+                localStorage.setItem('gh_token', token);
+                
                 const select = document.getElementById('repoSelect');
-                select.innerHTML = '<option value="">-- SELECT REPO --</option>';
-                repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
-                document.getElementById('selectorArea').classList.remove('hidden');
-                document.getElementById('loginArea').classList.add('hidden');
-            } catch (e) { alert("Invalid Token"); }
+                select.innerHTML = repos.map(r => `<option value="${r.name}">${r.name.toUpperCase()}</option>`).join('');
+                document.getElementById('authArea').classList.add('hidden');
+                document.getElementById('pickerArea').classList.remove('hidden');
+                fetchFiles();
+            } catch (e) { alert("Token Salah!"); }
         }
 
         async function fetchFiles() {
-            const token = localStorage.getItem('ican_token');
+            const token = localStorage.getItem('gh_token');
             const repo = document.getElementById('repoSelect').value;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
             });
             const files = await res.json();
-            const select = document.getElementById('fileSelect');
-            select.innerHTML = '<option value="">-- SELECT JSON FILE --</option>';
-            files.filter(f => f.name.endsWith('.json')).forEach(f => select.innerHTML += `<option value="${f.name}">${f.name}</option>`);
+            document.getElementById('fileSelect').innerHTML = files
+                .filter(f => f.name.endsWith('.json'))
+                .map(f => `<option value="${f.name}">${f.name}</option>`).join('');
         }
 
-        async function loadJsonData() {
-            const token = localStorage.getItem('ican_token');
+        async function loadContent() {
+            const token = localStorage.getItem('gh_token');
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 headers: { Authorization: `token ${token}` }, cache: 'no-store'
             });
-            const data = await res.json();
-            allData = JSON.parse(atob(data.content));
-            isArray = Array.isArray(allData);
+            const raw = await res.json();
+            allData = JSON.parse(atob(raw.content));
+            isArrayMode = Array.isArray(allData);
 
-            document.getElementById('editorArea').classList.remove('hidden');
-            document.getElementById('dataTypeBadge').innerText = isArray ? "Array / User List" : "Single Config";
+            document.getElementById('editorPanel').classList.remove('hidden');
+            document.getElementById('typeTag').innerText = isArrayMode ? "Array / User List" : "Nested Object / Config";
+            document.getElementById('statusPath').innerText = `${repo} > ${file}`;
             
-            if(isArray) {
-                document.getElementById('listSection').classList.remove('hidden');
-                renderUserForm();
-                renderList(allData);
+            refreshUI();
+        }
+
+        function refreshUI() {
+            const container = document.getElementById('formFields');
+            container.innerHTML = '';
+            
+            if (isArrayMode) {
+                document.getElementById('listPanel').classList.remove('hidden');
+                buildArrayForm();
+                renderCards(allData);
             } else {
-                document.getElementById('listSection').classList.add('hidden');
-                renderConfigForm(allData);
+                document.getElementById('listPanel').classList.add('hidden');
+                buildRecursiveForm(allData, container);
             }
         }
 
-        // --- RENDER UNTUK SINGLE CONFIG (Object) ---
-        function renderConfigForm(obj, container = null, path = '') {
-            const mainContainer = container || document.getElementById('dynamicInputs');
-            if(!container) mainContainer.innerHTML = '';
-
+        // --- FORM BUILDERS ---
+        function buildRecursiveForm(obj, container, path = '') {
             for (let key in obj) {
-                const currentPath = path ? `${path}.${key}` : key;
-                const value = obj[key];
+                const fullPath = path ? `${path}.${key}` : key;
+                const val = obj[key];
 
-                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                    const group = document.createElement('div');
-                    group.className = "p-4 bg-white/5 rounded-3xl border border-white/5 space-y-4 my-2";
-                    group.innerHTML = `<label class="text-[10px] text-indigo-400 font-black uppercase tracking-widest pl-2">${key}</label>`;
-                    mainContainer.appendChild(group);
-                    renderConfigForm(value, group, currentPath);
+                if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
+                    // Create folder-like section for Nested Objects
+                    const section = document.createElement('div');
+                    section.className = "p-4 bg-indigo-500/5 rounded-3xl border border-indigo-500/10 space-y-4 my-2";
+                    section.innerHTML = `<label class="text-[10px] text-indigo-400 font-black uppercase tracking-widest pl-2">${key}</label>`;
+                    container.appendChild(section);
+                    buildRecursiveForm(val, section, fullPath);
+                } else if (Array.isArray(val)) {
+                    // Handler for simple lists like socialLinks
+                    const listDiv = document.createElement('div');
+                    listDiv.className = "p-4 bg-slate-800/30 rounded-3xl space-y-3";
+                    listDiv.innerHTML = `<label class="text-[10px] text-slate-500 font-bold uppercase pl-2">${key} (List)</label>`;
+                    val.forEach((item, i) => buildRecursiveForm(item, listDiv, `${fullPath}.${i}`));
+                    container.appendChild(listDiv);
                 } else {
-                    mainContainer.appendChild(createField(key, value, currentPath, 'config-field'));
+                    container.appendChild(createInput(key, val, fullPath, 'config-input'));
                 }
             }
         }
 
-        // --- RENDER UNTUK USER LIST (Array) ---
-        function renderUserForm() {
-            const container = document.getElementById('dynamicInputs');
-            container.innerHTML = '';
-            // Ambil template dari data pertama agar fieldnya sinkron
-            const template = allData.length > 0 ? allData[0] : { id: "", username: "", password: "", expiresAt: "", allowOffline: false };
+        function buildArrayForm() {
+            const container = document.getElementById('formFields');
+            const template = allData.length > 0 ? allData[0] : { username: "", password: "", expiresAt: "", allowOffline: false };
             for(let key in template) {
-                container.appendChild(createField(key, '', key, 'user-field'));
+                container.appendChild(createInput(key, '', key, 'user-input'));
             }
         }
 
-        // --- HELPER BUAT FIELD INPUT ---
-        function createField(key, value, path, className) {
+        function createInput(key, val, path, cls) {
             const div = document.createElement('div');
             div.className = "flex flex-col gap-1.5";
+            
+            // Logika Deteksi Tipe Input
+            const isBool = (typeof val === 'boolean' || ['enabled', 'mandatory', 'allowoffline'].some(s => key.toLowerCase().includes(s)));
             let input = '';
-            
-            const isBool = typeof value === 'boolean' || key.toLowerCase().includes('allowoffline') || key.toLowerCase() === 'enabled' || key.toLowerCase() === 'mandatory';
-            
+
             if (isBool) {
-                input = `<select data-path="${path}" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">
-                            <option value="false" ${value === false ? 'selected' : ''}>FALSE</option>
-                            <option value="true" ${value === true ? 'selected' : ''}>TRUE</option>
-                        </select>`;
-            } else if (key === 'message' || key === 'description') {
-                input = `<textarea data-path="${path}" rows="3" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">${value}</textarea>`;
+                input = `<select data-path="${path}" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white">
+                    <option value="false" ${val === false ? 'selected' : ''}>FALSE (OFF)</option>
+                    <option value="true" ${val === true ? 'selected' : ''}>TRUE (ON)</option>
+                </select>`;
+            } else if (key.toLowerCase() === 'message') {
+                input = `<textarea data-path="${path}" rows="3" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white">${val}</textarea>`;
             } else {
                 const type = key.toLowerCase().includes('date') || key.toLowerCase().includes('expires') ? 'date' : 'text';
-                input = `<input type="${type}" data-path="${path}" value="${value}" class="${className} w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-white outline-none">`;
+                input = `<input type="${type}" data-path="${path}" value="${val}" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white input-focus">`;
             }
 
             div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${input}`;
             return div;
         }
 
-        // --- RENDER LIST KARTU ---
-        function renderList(data) {
-            const container = document.getElementById('itemsContainer');
+        // --- LIST RENDER ---
+        function renderCards(data) {
+            const container = document.getElementById('cardContainer');
             container.innerHTML = '';
             data.forEach((item, index) => {
                 const originalIdx = allData.indexOf(item);
-                let details = '';
-                for(let k in item) details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span class="text-slate-500 uppercase">${k}</span><span class="text-indigo-300 font-mono truncate ml-4">${item[k]}</span></div>`;
+                let info = '';
+                for(let k in item) info += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span class="text-slate-500 uppercase">${k}</span><span class="text-indigo-300 font-mono truncate ml-4">${item[k]}</span></div>`;
                 
                 container.innerHTML += `
-                <div class="glass-card p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                <div class="glass p-5 rounded-[2rem] border border-white/5 shadow-lg">
                     <div class="flex justify-between items-center mb-4">
-                        <div class="truncate"><h3 class="text-lg font-black text-white italic uppercase">${item.username || item.name || 'USER'}</h3></div>
+                        <h3 class="text-lg font-black text-white italic uppercase truncate">${item.username || item.name || 'DATA'}</h3>
                         <div class="flex gap-2">
-                            <button onclick="editItem(${originalIdx})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteItem(${originalIdx})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="editRow(${originalIdx})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteRow(${originalIdx})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
-                    <div class="bg-black/20 p-4 rounded-2xl">${details}</div>
+                    <div class="bg-black/20 p-4 rounded-2xl">${info}</div>
                 </div>`;
             });
         }
 
-        // --- LOGIKA SIMPAN ---
-        async function saveChanges() {
+        // --- CORE LOGIC: PUSH & SAVE ---
+        async function pushUpdate() {
             const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.innerText = "SAVING...";
+            btn.disabled = true; btn.innerText = "SINKRONISASI...";
 
-            if (isArray) {
+            if (isArrayMode) {
+                // Logic for User List (Array)
                 let newItem = {};
-                document.querySelectorAll('.user-field').forEach(f => {
-                    const key = f.getAttribute('data-path');
-                    let val = f.value;
+                document.querySelectorAll('.user-input').forEach(i => {
+                    const key = i.getAttribute('data-path');
+                    let val = i.value;
                     if(val === 'true') val = true; else if(val === 'false') val = false;
                     newItem[key] = val;
                 });
-                if(editIndex > -1) allData[editIndex] = newItem; else allData.push(newItem);
+                if(currentEditIdx > -1) allData[currentEditIdx] = newItem; else allData.push(newItem);
             } else {
-                document.querySelectorAll('.config-field').forEach(f => {
-                    const path = f.getAttribute('data-path').split('.');
-                    let val = f.value;
+                // Logic for Update Dialog (Nested Object)
+                document.querySelectorAll('.config-input').forEach(i => {
+                    const path = i.getAttribute('data-path').split('.');
+                    let val = i.value;
                     if(val === 'true') val = true; else if(val === 'false') val = false;
-                    
+
+                    // Deep nesting navigation
                     let ref = allData;
-                    for(let i=0; i < path.length - 1; i++) ref = ref[path[i]];
+                    for(let k=0; k < path.length - 1; k++) {
+                        ref = ref[path[k]];
+                    }
                     ref[path[path.length - 1]] = val;
                 });
             }
 
-            await pushToGitHub();
-            btn.disabled = false; btn.innerText = "SAVE CHANGES";
-            resetForm();
+            try {
+                const token = localStorage.getItem('gh_token');
+                const repo = document.getElementById('repoSelect').value;
+                const file = document.getElementById('fileSelect').value;
+                
+                const getSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
+                const shaData = await getSha.json();
+
+                const push = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    method: 'PUT',
+                    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: "Cloud Update: " + file,
+                        content: btoa(JSON.stringify(allData, null, 2)),
+                        sha: shaData.sha
+                    })
+                });
+
+                if(push.ok) alert("✅ Data Berhasil Diperbarui!");
+                else alert("❌ Gagal Push ke GitHub!");
+                loadContent();
+            } catch (e) { alert("Error!"); }
+            finally {
+                btn.disabled = false; btn.innerText = "PUSH TO GITHUB";
+                resetUserForm();
+            }
         }
 
-        async function pushToGitHub() {
-            const token = localStorage.getItem('ican_token');
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
-            const shaData = await resSha.json();
-            
-            await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: "Update via Manager",
-                    content: btoa(JSON.stringify(allData, null, 2)),
-                    sha: shaData.sha
-                })
-            });
-            alert("Updated Successfully!");
-            loadJsonData();
-        }
-
-        function editItem(idx) {
-            editIndex = idx;
+        function editRow(idx) {
+            currentEditIdx = idx;
             const item = allData[idx];
-            document.querySelectorAll('.user-field').forEach(f => {
-                const key = f.getAttribute('data-path');
-                f.value = String(item[key] || '');
+            document.querySelectorAll('.user-input').forEach(i => {
+                const key = i.getAttribute('data-path');
+                i.value = String(item[key] || '');
             });
             document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('formTitle').innerText = "Edit Mode";
+            document.getElementById('editorTitle').innerText = "Edit User Mode";
             window.scrollTo({top: 400, behavior: 'smooth'});
         }
 
-        function deleteItem(idx) {
-            if(confirm("Delete this record?")) { allData.splice(idx, 1); pushToGitHub(); }
+        function deleteRow(idx) {
+            if(confirm("Hapus data ini?")) { allData.splice(idx, 1); pushUpdate(); }
         }
 
-        function resetForm() {
-            editIndex = -1;
-            document.querySelectorAll('.user-field').forEach(f => f.value = '');
+        function resetUserForm() {
+            currentEditIdx = -1;
+            document.querySelectorAll('.user-input').forEach(i => i.value = '');
             document.getElementById('btnCancel').classList.add('hidden');
-            document.getElementById('formTitle').innerText = "Editor";
+            document.getElementById('editorTitle').innerText = "Editor";
         }
 
-        function filterData() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
+        function filterList() {
+            const q = document.getElementById('searchBar').value.toLowerCase();
             const filtered = allData.filter(item => Object.values(item).some(v => String(v).toLowerCase().includes(q)));
-            renderList(filtered);
+            renderCards(filtered);
+        }
+
+        // Auto Load Token if exist
+        window.onload = () => {
+            const t = localStorage.getItem('gh_token');
+            if(t) { document.getElementById('ghToken').value = t; connectGitHub(); }
         }
     </script>
 </body>
