@@ -26,5 +26,12 @@
     "password": "User3",
     "expiresAt": "2026-02-07",
     "allowOffline": true
+  },
+  {
+    "id": "cb8f72ab063653eb",
+    "username": "Arastuti",
+    "password": "Arastuti",
+    "expiresAt": "2026-12-21",
+    "allowOffline": true
   }
 ]
