@@ -36,9 +36,9 @@
   },
   {
     "id": "945dfa4e8e00046f",
-    "username": "Test",
-    "password": "Test",
-    "expiresAt": "2026-02-05",
+    "username": "User4",
+    "password": "User4",
+    "expiresAt": "2026-03-05",
     "allowOffline": true
   }
 ]
