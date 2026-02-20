@@ -10,57 +10,42 @@
 <body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
 
     <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
-        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">TKS TEAM Smart Admin</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Powered By Ican Tampan</p>
+        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">Global Manager</h1>
+        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Deep JSON Editor & Auto-Token</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
         <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
             <div id="loginArea">
-                <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">GitHub Personal Access Token</label>
-                <div class="relative">
-                    <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
-                    <button onclick="toggleTokenVisibility()" class="absolute right-4 top-4 text-slate-500">
-                        <i id="tokenEye" class="fa-solid fa-eye"></i>
-                    </button>
-                </div>
+                <input type="password" id="ghToken" placeholder="GitHub Token" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
                 <div class="flex gap-2">
                     <button onclick="connectAndSave()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Login & Simpan</button>
                     <button onclick="clearSavedToken()" class="bg-red-500/10 text-red-500 px-4 rounded-2xl border border-red-500/20"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>
-            
-            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
-                <div class="flex justify-between items-center px-2">
-                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Tersambung</span>
-                    <button onclick="logout()" class="text-[9px] text-red-400 font-bold uppercase underline">Ganti Akun</button>
-                </div>
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka Database</button>
+            <div id="selectorArea" class="hidden space-y-4 mt-4">
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white"></select>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest">Buka File</button>
             </div>
         </div>
 
         <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
-            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Global Config</h2>
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Configuration Editor</h2>
             <div id="configInputs" class="space-y-4"></div>
-            <button onclick="saveGlobalConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Update Config</button>
+            <button onclick="saveDeepConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Update Configuration</button>
         </div>
 
         <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Management</h2>
             <div id="userInputs" class="space-y-4 mt-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Simpan User</button>
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg">Simpan User</button>
                 <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
 
         <div id="listArea" class="hidden">
-            <div class="relative mb-6">
-                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
-            </div>
             <div id="userList" class="space-y-4"></div>
         </div>
     </div>
@@ -71,73 +56,29 @@
         let userArray = [];
         let userFields = [];
 
-        // --- FUNGSI AUTO TOKEN (BARU) ---
         window.onload = () => {
             const savedToken = localStorage.getItem('ican_gh_token');
-            if (savedToken) {
-                document.getElementById('ghToken').value = savedToken;
-                connectAndSave(true); // Auto-login tanpa alert
-            }
+            if (savedToken) { document.getElementById('ghToken').value = savedToken; connectAndSave(true); }
         };
 
         async function connectAndSave(isAuto = false) {
             const token = document.getElementById('ghToken').value;
-            if (!token) return alert("Masukkan Token!");
-            
             try {
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                
                 if (res.ok) {
                     const repos = await res.json();
-                    localStorage.setItem('ican_gh_token', token); // SIMPAN KE MEMORI HP
-                    
+                    localStorage.setItem('ican_gh_token', token);
                     const select = document.getElementById('repoSelect');
                     select.innerHTML = '<option value="">-- PILIH REPO --</option>';
                     repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
-                    
                     document.getElementById('selectorArea').classList.remove('hidden');
                     document.getElementById('loginArea').classList.add('hidden');
-                    if(!isAuto) alert("Login Berhasil & Token Disimpan!");
-                } else {
-                    throw new Error();
                 }
-            } catch (e) {
-                if(!isAuto) alert("Token Salah atau Expired!");
-                localStorage.removeItem('ican_gh_token');
-            }
+            } catch (e) { localStorage.removeItem('ican_gh_token'); }
         }
 
-        function clearSavedToken() {
-            if(confirm("Hapus token yang tersimpan?")) {
-                localStorage.removeItem('ican_gh_token');
-                document.getElementById('ghToken').value = '';
-                alert("Token Dihapus.");
-            }
-        }
-
-        function logout() {
-            document.getElementById('selectorArea').classList.add('hidden');
-            document.getElementById('loginArea').classList.remove('hidden');
-            document.getElementById('configArea').classList.add('hidden');
-            document.getElementById('userEditorArea').classList.add('hidden');
-            document.getElementById('listArea').classList.add('hidden');
-        }
-
-        function toggleTokenVisibility() {
-            const input = document.getElementById('ghToken');
-            const eye = document.getElementById('tokenEye');
-            if (input.type === "password") {
-                input.type = "text";
-                eye.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = "password";
-                eye.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
-
-        // --- LOGIKA DATABASE ---
         async function fetchFiles() {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
@@ -154,132 +95,85 @@
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 headers: { Authorization: `token ${token}` }, cache: 'no-store'
             });
             const data = await res.json();
             rawData = JSON.parse(atob(data.content));
 
-            // Generate Config
+            // RESET TAMPILAN
             const cfgContainer = document.getElementById('configInputs');
             cfgContainer.innerHTML = '';
-            for (let key in rawData) {
-                if (typeof rawData[key] !== 'object') {
-                    cfgContainer.innerHTML += generateFieldHtml(`cfg_${key}`, key, rawData[key]);
-                }
-            }
+            document.getElementById('configArea').classList.add('hidden');
+            document.getElementById('userEditorArea').classList.add('hidden');
+            document.getElementById('listArea').classList.add('hidden');
+
+            // 1. CARI SEMUA FIELD NON-ARRAY (Termasuk di dalam dialogConfig)
+            parseDeepConfig(rawData, cfgContainer);
             document.getElementById('configArea').classList.remove('hidden');
 
-            // Handle Users
+            // 2. CARI DAFTAR USER (Array)
             userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
-            if (userArray) {
+            if (userArray && Array.isArray(userArray)) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
                 document.getElementById('listArea').classList.remove('hidden');
-                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry', 'AllowOffline'];
-                const userInputs = document.getElementById('userInputs');
-                userInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
-                userFields.forEach(f => userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, ''));
+                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
+                const uInputs = document.getElementById('userInputs');
+                uInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
+                userFields.forEach(f => uInputs.innerHTML += generateFieldHtml(`field_${f}`, f, ''));
                 renderUserList();
+            }
+        }
+
+        // FUNGSI PINTAR UNTUK BONGKAR DIALOGCONFIG
+        function parseDeepConfig(obj, container, path = '') {
+            for (let key in obj) {
+                const currentPath = path ? `${path}.${key}` : key;
+                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                    parseDeepConfig(obj[key], container, currentPath);
+                } else if (!Array.isArray(obj[key])) {
+                    container.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, obj[key]);
+                }
             }
         }
 
         function generateFieldHtml(id, label, value) {
             const lower = label.toLowerCase();
-            if (lower.includes('offline') || lower.includes('allow') || lower.includes('status')) {
+            const isDate = lower.includes('exp') || lower.includes('tgl');
+            const isBool = lower.includes('enabled') || lower.includes('mandatory') || lower.includes('offline') || lower.includes('allow');
+
+            if (isBool) {
                 return `
                 <div class="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700 rounded-2xl mb-2">
-                    <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${label}</label>
-                    <select id="${id}" class="bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
+                    <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${label.replace(/\./g, ' > ')}</label>
+                    <select id="${id}" data-path="${label}" class="deep-cfg bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
                         <option value="true" ${value === true || value === 'true' ? 'selected' : ''}>TRUE</option>
                         <option value="false" ${value === false || value === 'false' ? 'selected' : ''}>FALSE</option>
                     </select>
                 </div>`;
             }
-            const isDate = lower.includes('exp') || lower.includes('tgl');
+
             return `
             <div class="space-y-1 mb-2">
-                <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${label}</label>
-                <input type="${isDate ? 'date' : 'text'}" id="${id}" value="${value}" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
+                <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${label.replace(/\./g, ' > ')}</label>
+                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="deep-cfg w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
             </div>`;
         }
 
-        function renderUserList() {
-            const list = document.getElementById('userList');
-            list.innerHTML = '';
-            userArray.forEach((u, i) => {
-                let detailStr = '';
-                Object.keys(u).forEach(k => {
-                    const val = u[k];
-                    const color = (val === true || val === 'true') ? 'text-emerald-400' : ((val === false || val === 'false') ? 'text-red-400' : 'text-blue-300');
-                    detailStr += `<div class="flex justify-between border-b border-white/5 py-1">
-                        <span class="text-[8px] text-slate-500 uppercase font-bold">${k}</span>
-                        <span class="text-[10px] ${color} font-mono font-bold">${val}</span>
-                    </div>`;
-                });
-                list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
-                            <div class="flex gap-2">
-                                <button onclick="editUser(${i})" class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-9 h-9 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center border border-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-2xl space-y-1">${detailStr}</div>
-                    </div>`;
-            });
-        }
-
-        async function saveGlobalConfig() {
-            const btn = document.getElementById('btnSaveConfig');
-            btn.disabled = true; btn.innerText = "MENYIMPAN...";
-            for (let key in rawData) {
-                if (typeof rawData[key] !== 'object') {
-                    let val = document.getElementById(`cfg_${key}`).value;
-                    rawData[key] = (val === 'true' || val === 'false') ? (val === 'true') : val;
-                }
-            }
-            await pushToGitHub("Global Update");
-            btn.disabled = false; btn.innerText = "UPDATE CONFIG";
-        }
-
-        async function saveUserData() {
-            const btn = document.getElementById('btnSaveUser');
-            btn.disabled = true; btn.innerText = "PROSES...";
-            const index = parseInt(document.getElementById('editIndex').value);
-            let newUser = {};
-            userFields.forEach(f => {
-                let val = document.getElementById(`field_${f}`).value;
+        async function saveDeepConfig() {
+            const inputs = document.querySelectorAll('.deep-cfg');
+            inputs.forEach(input => {
+                const path = input.dataset.path.split('.');
+                let ref = rawData;
+                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                let val = input.value;
                 if (val === 'true') val = true; else if (val === 'false') val = false;
-                newUser[f] = val;
+                ref[path[path.length - 1]] = val;
             });
-            if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
-            await pushToGitHub("User Sync");
-            resetUserForm();
-            btn.disabled = false; btn.innerText = "SIMPAN USER";
+            await pushToGitHub("Update Config");
         }
 
-        function editUser(i) {
-            const u = userArray[i];
-            document.getElementById('editIndex').value = i;
-            userFields.forEach(f => {
-                const el = document.getElementById(`field_${f}`);
-                if(el.type === 'date' && u[f].includes('/')) {
-                    const p = u[f].split('/'); el.value = `${p[2]}-${p[1]}-${p[0]}`;
-                } else { el.value = u[f]; }
-            });
-            document.getElementById('btnCancel').classList.remove('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
-
-        function resetUserForm() {
-            document.getElementById('editIndex').value = "-1";
-            userFields.forEach(f => document.getElementById(`field_${f}`).value = '');
-            document.getElementById('btnCancel').classList.add('hidden');
-        }
-
+        // --- FUNGSI GITHUB PUSH ---
         async function pushToGitHub(msg) {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
@@ -297,15 +191,55 @@
                     sha: dataSha.sha
                 })
             });
-            if(res.ok) alert("Sukses!");
+            if(res.ok) alert("Sukses Update!");
             loadJsonData();
         }
 
-        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
-        function filterUser() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none');
+        function clearSavedToken() { localStorage.removeItem('ican_gh_token'); location.reload(); }
+        function renderUserList() {
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+            userArray.forEach((u, i) => {
+                list.innerHTML += `<div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg flex justify-between items-center">
+                    <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
+                    <div class="flex gap-2">
+                        <button onclick="editUser(${i})" class="text-blue-400 p-2"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteUser(${i})" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            });
         }
+        function editUser(i) {
+            const u = userArray[i];
+            document.getElementById('editIndex').value = i;
+            userFields.forEach(f => {
+                const el = document.getElementById(`field_${f}`);
+                if(el.type === 'date' && u[f].includes('/')) {
+                    const p = u[f].split('/'); el.value = `${p[2]}-${p[1]}-${p[0]}`;
+                } else { el.value = u[f]; }
+            });
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        async function saveUserData() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            let newUser = {};
+            userFields.forEach(f => {
+                let val = document.getElementById(`field_${f}`).value;
+                if (val === 'true') val = true; else if (val === 'false') val = false;
+                newUser[f] = val;
+            });
+            if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
+            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
+            await pushToGitHub("User Sync");
+            resetUserForm();
+        }
+        function resetUserForm() {
+            document.getElementById('editIndex').value = "-1";
+            userFields.forEach(f => document.getElementById(`field_${f}`).value = '');
+            document.getElementById('btnCancel').classList.add('hidden');
+        }
+        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
     </script>
 </body>
 </html>
