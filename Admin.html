@@ -32,8 +32,8 @@
             
             <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
                 <div class="flex justify-between items-center px-2">
-                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Tersambung</span>
-                    <button onclick="logout()" class="text-[9px] text-red-400 font-bold uppercase underline">Ganti Akun</button>
+                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Online</span>
+                    <button onclick="logout()" class="text-[9px] text-red-400 font-bold uppercase underline">Logout</button>
                 </div>
                 <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
                 <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
@@ -43,15 +43,15 @@
 
         <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
             <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Global Config</h2>
-            <div id="configInputs" class="space-y-4"></div>
+            <div id="configInputs" class="space-y-4 text-xs"></div>
             <button onclick="saveGlobalConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Update Config</button>
         </div>
 
         <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Manager</h2>
             <div id="userInputs" class="space-y-4 mt-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Simpan User</button>
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Save User</button>
                 <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
@@ -59,7 +59,7 @@
         <div id="listArea" class="hidden">
             <div class="relative mb-6">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari ID atau Nama..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
             </div>
             <div id="userList" class="space-y-4"></div>
         </div>
@@ -81,7 +81,7 @@
 
         async function connectAndSave(isAuto = false) {
             const token = document.getElementById('ghToken').value;
-            if (!token) return alert("Masukkan Token!");
+            if (!token) return;
             try {
                 const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
@@ -94,21 +94,19 @@
                     repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
                     document.getElementById('selectorArea').classList.remove('hidden');
                     document.getElementById('loginArea').classList.add('hidden');
-                } else { throw new Error(); }
-            } catch (e) { if(!isAuto) alert("Token Salah!"); localStorage.removeItem('ican_gh_token'); }
+                }
+            } catch (e) {}
         }
 
         function clearSavedToken() {
-            if(confirm("Hapus token?")) { localStorage.removeItem('ican_gh_token'); document.getElementById('ghToken').value = ''; location.reload(); }
+            if(confirm("Hapus token?")) { localStorage.removeItem('ican_gh_token'); location.reload(); }
         }
 
         function logout() { location.reload(); }
 
         function toggleTokenVisibility() {
             const input = document.getElementById('ghToken');
-            const eye = document.getElementById('tokenEye');
             input.type = input.type === "password" ? "text" : "password";
-            eye.classList.toggle('fa-eye'); eye.classList.toggle('fa-eye-slash');
         }
 
         async function fetchFiles() {
@@ -135,41 +133,40 @@
             document.getElementById('userEditorArea').classList.add('hidden');
             document.getElementById('listArea').classList.add('hidden');
 
-            // 1. CARI FIELD CONFIG (Root & Nested) - HANYA TEXT/BOOL
+            // --- FILTER: HANYA CONFIG (NON-ARRAY) ---
             function extractConfig(obj, path = '') {
                 for (let key in obj) {
-                    if (key.toLowerCase() === 'users') continue; 
+                    if (key.toLowerCase() === 'users') continue; // Skip list user total
                     
                     const currentPath = path ? `${path}.${key}` : key;
                     const value = obj[key];
 
-                    // JIKA OBJECT, MASUK LEBIH DALAM
                     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                         extractConfig(value, currentPath);
-                    } 
-                    // HANYA MASUKKAN JIKA BUKAN ARRAY (Bukan list user)
-                    else if (!Array.isArray(value)) {
-                        cfgContainer.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, value);
+                    } else if (!Array.isArray(value)) {
+                        cfgContainer.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, value, 'config-val');
                     }
                 }
             }
+            
             extractConfig(rawData);
             if (cfgContainer.innerHTML !== '') document.getElementById('configArea').classList.remove('hidden');
 
-            // 2. HANDLE USERS (Murni di bagian bawah)
-            userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
-            if (userArray && Array.isArray(userArray)) {
+            // --- HANDLE USER LIST ---
+            userArray = rawData.Users || (Array.isArray(rawData) ? rawData : []);
+            if (Array.isArray(userArray)) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
                 document.getElementById('listArea').classList.remove('hidden');
+                // Ambil field dari user pertama atau default
                 userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
                 const userInputs = document.getElementById('userInputs');
                 userInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
-                userFields.forEach(f => userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, ''));
+                userFields.forEach(f => userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, '', 'user-val'));
                 renderUserList();
             }
         }
 
-        function generateFieldHtml(id, label, value) {
+        function generateFieldHtml(id, label, value, cssClass) {
             const lower = label.toLowerCase();
             const isBool = lower.match(/enabled|mandatory|offline|allow|status/);
             const isDate = lower.match(/exp|tgl|date/);
@@ -179,7 +176,7 @@
                 return `
                 <div class="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700 rounded-2xl mb-2">
                     <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${cleanLabel}</label>
-                    <select id="${id}" data-path="${label}" class="config-val bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
+                    <select id="${id}" data-path="${label}" class="${cssClass} bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
                         <option value="true" ${value === true || value === 'true' ? 'selected' : ''}>TRUE</option>
                         <option value="false" ${value === false || value === 'false' ? 'selected' : ''}>FALSE</option>
                     </select>
@@ -188,7 +185,7 @@
             return `
             <div class="space-y-1 mb-2">
                 <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${cleanLabel}</label>
-                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="config-val w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
+                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="${cssClass} w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
             </div>`;
         }
 
@@ -196,34 +193,34 @@
             const list = document.getElementById('userList');
             list.innerHTML = '';
             userArray.forEach((u, i) => {
-                let detailStr = '';
+                let details = '';
                 Object.keys(u).forEach(k => {
                     const val = u[k];
-                    const color = (val === true || val === 'true') ? 'text-emerald-400' : ((val === false || val === 'false') ? 'text-red-400' : 'text-blue-300');
-                    detailStr += `<div class="flex justify-between border-b border-white/5 py-1">
-                        <span class="text-[8px] text-slate-500 uppercase font-bold">${k}</span>
-                        <span class="text-[10px] ${color} font-mono font-bold">${val}</span>
+                    const color = (val === true || val === 'true') ? 'text-emerald-400' : 'text-slate-300';
+                    details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5">
+                        <span class="opacity-50 uppercase font-bold">${k}</span>
+                        <span class="${color} font-mono">${val}</span>
                     </div>`;
                 });
                 list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg">
+                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg">
                         <div class="flex justify-between items-center mb-3">
                             <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
                             <div class="flex gap-2">
-                                <button onclick="editUser(${i})" class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-9 h-9 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center border border-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="editUser(${i})" class="w-8 h-8 bg-blue-500/20 text-blue-400 rounded-lg"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-8 h-8 bg-red-500/20 text-red-400 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </div>
-                        <div class="bg-black/40 p-4 rounded-2xl space-y-1">${detailStr}</div>
+                        <div class="bg-black/20 p-3 rounded-xl">${details}</div>
                     </div>`;
             });
         }
 
         async function saveGlobalConfig() {
             const btn = document.getElementById('btnSaveConfig');
-            btn.disabled = true; btn.innerText = "MENYIMPAN...";
-            const inputs = document.querySelectorAll('#configInputs .config-val');
-            inputs.forEach(input => {
+            btn.disabled = true; btn.innerText = "WAIT...";
+            
+            document.querySelectorAll('.config-val').forEach(input => {
                 const path = input.getAttribute('data-path').split('.');
                 let ref = rawData;
                 for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
@@ -231,13 +228,14 @@
                 if (val === 'true') val = true; else if (val === 'false') val = false;
                 ref[path[path.length - 1]] = val;
             });
+
             await pushToGitHub("Global Update");
             btn.disabled = false; btn.innerText = "UPDATE CONFIG";
         }
 
         async function saveUserData() {
             const btn = document.getElementById('btnSaveUser');
-            btn.disabled = true; btn.innerText = "PROSES...";
+            btn.disabled = true;
             const index = parseInt(document.getElementById('editIndex').value);
             let newUser = {};
             userFields.forEach(f => {
@@ -246,10 +244,12 @@
                 newUser[f] = val;
             });
             if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
+            
+            if (rawData.Users) rawData.Users = userArray; else rawData = userArray;
+            
             await pushToGitHub("User Sync");
             resetUserForm();
-            btn.disabled = false; btn.innerText = "SIMPAN USER";
+            btn.disabled = false;
         }
 
         function editUser(i) {
@@ -257,10 +257,7 @@
             document.getElementById('editIndex').value = i;
             userFields.forEach(f => {
                 const el = document.getElementById(`field_${f}`);
-                let val = u[f];
-                if(el.type === 'date' && val && val.includes('/')) {
-                    const p = val.split('/'); el.value = `${p[2]}-${p[1]}-${p[0]}`;
-                } else { el.value = val; }
+                el.value = u[f];
             });
             document.getElementById('btnCancel').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -283,11 +280,12 @@
                 headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(rawData, null, 2)), sha: dataSha.sha })
             });
-            alert("Sukses!");
+            alert("Berhasil!");
             loadJsonData();
         }
 
-        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
+        function deleteUser(i) { if(confirm("Hapus user?")) { userArray.splice(i, 1); pushToGitHub("Delete User"); } }
+        
         function filterUser() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none');
