@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Manager Ican2233</title>
+    <title>Premium Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -11,17 +11,15 @@
 
     <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
         <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">TKS TEAM Smart Admin</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Universal JSON & User Controller</p>
+        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Universal JSON & Auto-Switch System</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
-        
         <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
             <div id="loginArea">
-                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
+                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition">
                 <button onclick="fetchAllRepos()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Hubungkan Akun</button>
             </div>
-
             <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
                 <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
                 <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
@@ -30,9 +28,7 @@
         </div>
 
         <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
-            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
-                <i class="fa-solid fa-gears mr-2"></i> Global Config
-            </h2>
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Global Config</h2>
             <div id="configInputs" class="space-y-4"></div>
             <button onclick="saveGlobalConfig()" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Update Config</button>
         </div>
@@ -53,13 +49,12 @@
             </div>
             <div id="userList" class="space-y-4"></div>
         </div>
-
     </div>
 
     <script>
         const OWNER = 'Ican2233';
-        let rawData = null; // Full JSON
-        let userArray = []; // Pointer ke list user
+        let rawData = null;
+        let userArray = [];
         let userFields = [];
 
         async function fetchAllRepos() {
@@ -100,40 +95,53 @@
             const data = await res.json();
             rawData = JSON.parse(atob(data.content));
 
-            // RESET TAMPILAN
-            document.getElementById('configInputs').innerHTML = '';
-            document.getElementById('userInputs').innerHTML = '<input type="hidden" id="editIndex" value="-1">';
-            
-            // 1. CARI GLOBAL CONFIG (Teks Biasa)
+            // Generate Config Inputs
+            const cfgContainer = document.getElementById('configInputs');
+            cfgContainer.innerHTML = '';
             for (let key in rawData) {
                 if (typeof rawData[key] !== 'object') {
-                    document.getElementById('configInputs').innerHTML += `
-                        <div class="space-y-1">
-                            <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${key}</label>
-                            <input type="text" id="cfg_${key}" value="${rawData[key]}" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-amber-400">
-                        </div>`;
+                    cfgContainer.innerHTML += generateFieldHtml(`cfg_${key}`, key, rawData[key]);
                 }
             }
             document.getElementById('configArea').classList.remove('hidden');
 
-            // 2. CARI DAFTAR USER (Mencari Array bernama 'Users' atau sejenisnya)
+            // Handle Users Array
             userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
-            
             if (userArray) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
                 document.getElementById('listArea').classList.remove('hidden');
-                
-                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
+                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry', 'AllowOffline'];
+                const userInputs = document.getElementById('userInputs');
+                userInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
                 userFields.forEach(f => {
-                    const isDate = f.toLowerCase().includes('exp');
-                    document.getElementById('userInputs').innerHTML += `
-                        <div class="space-y-1">
-                            <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${f}</label>
-                            <input type="${isDate ? 'date' : 'text'}" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl text-sm text-white focus:border-emerald-500">
-                        </div>`;
+                    userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, '');
                 });
                 renderUserList();
             }
+        }
+
+        // FUNGSI PINTAR: Menentukan tipe input (Teks, Kalender, atau Switch True/False)
+        function generateFieldHtml(id, label, value) {
+            const lowerLabel = label.toLowerCase();
+            const isDate = lowerLabel.includes('exp') || lowerLabel.includes('tgl');
+            const isBoolean = lowerLabel.includes('offline') || lowerLabel.includes('allow') || lowerLabel.includes('status');
+
+            if (isBoolean) {
+                return `
+                <div class="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700 rounded-2xl mb-2">
+                    <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${label}</label>
+                    <select id="${id}" class="bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none border-none">
+                        <option value="true" ${value === true || value === 'true' ? 'selected' : ''}>TRUE</option>
+                        <option value="false" ${value === false || value === 'false' ? 'selected' : ''}>FALSE</option>
+                    </select>
+                </div>`;
+            }
+
+            return `
+            <div class="space-y-1 mb-2">
+                <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${label}</label>
+                <input type="${isDate ? 'date' : 'text'}" id="${id}" value="${value}" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
+            </div>`;
         }
 
         function renderUserList() {
@@ -142,19 +150,25 @@
             userArray.forEach((u, i) => {
                 let detailStr = '';
                 Object.keys(u).forEach(k => {
-                    detailStr += `<div class="flex justify-between border-b border-white/5 py-1">
+                    const val = u[k];
+                    const isTrue = val === true || val === 'true';
+                    const isFalse = val === false || val === 'false';
+                    const colorClass = isTrue ? 'text-emerald-400' : (isFalse ? 'text-red-400' : 'text-blue-300');
+                    
+                    detailStr += `
+                    <div class="flex justify-between border-b border-white/5 py-1">
                         <span class="text-[8px] text-slate-500 uppercase font-bold">${k}</span>
-                        <span class="text-[10px] text-emerald-400 font-mono">${u[k]}</span>
+                        <span class="text-[10px] ${colorClass} font-mono font-bold">${val}</span>
                     </div>`;
                 });
 
                 list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                    <div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg">
                         <div class="flex justify-between items-center mb-3">
                             <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
                             <div class="flex gap-2">
-                                <button onclick="editUser(${i})" class="text-blue-400 p-2"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteUser(${i})" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="editUser(${i})" class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-9 h-9 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center border border-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </div>
                         <div class="bg-black/40 p-4 rounded-2xl space-y-1">${detailStr}</div>
@@ -165,7 +179,8 @@
         async function saveGlobalConfig() {
             for (let key in rawData) {
                 if (typeof rawData[key] !== 'object') {
-                    rawData[key] = document.getElementById(`cfg_${key}`).value;
+                    let val = document.getElementById(`cfg_${key}`).value;
+                    rawData[key] = (val === 'true' || val === 'false') ? (val === 'true') : val;
                 }
             }
             await pushToGitHub("Update Global Config");
@@ -176,18 +191,16 @@
             let newUser = {};
             userFields.forEach(f => {
                 let val = document.getElementById(`field_${f}`).value;
-                // Jika input tanggal, format ulang ke DD/MM/YYYY jika perlu, 
-                // tapi di sini kita simpan apa adanya dari input date
+                // Auto-convert string 'true'/'false' back to boolean boolean
+                if (val === 'true') val = true;
+                else if (val === 'false') val = false;
                 newUser[f] = val;
             });
 
             if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            
-            // Pastikan data masuk kembali ke objek utama
-            if (rawData.Users) rawData.Users = userArray; 
-            else if (Array.isArray(rawData)) rawData = userArray;
+            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
 
-            await pushToGitHub("Update Users Data");
+            await pushToGitHub("Update Users");
             resetUserForm();
         }
 
@@ -196,12 +209,12 @@
             document.getElementById('editIndex').value = i;
             userFields.forEach(f => {
                 const el = document.getElementById(`field_${f}`);
-                if(el.type === 'date' && u[f].includes('/')) {
-                    // Convert DD/MM/YYYY to YYYY-MM-DD for date input
-                    const parts = u[f].split('/');
-                    el.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                let val = u[f];
+                if(el.type === 'date' && val.includes('/')) {
+                    const p = val.split('/');
+                    el.value = `${p[2]}-${p[1]}-${p[0]}`;
                 } else {
-                    el.value = u[f];
+                    el.value = val;
                 }
             });
             document.getElementById('btnCancel').classList.remove('hidden');
@@ -214,22 +227,14 @@
             document.getElementById('btnCancel').classList.add('hidden');
         }
 
-        async function deleteUser(i) {
-            if(!confirm("Hapus user?")) return;
-            userArray.splice(i, 1);
-            await pushToGitHub("Delete User");
-        }
-
         async function pushToGitHub(msg) {
             const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            
             const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 headers: { Authorization: `token ${token}` }
             });
             const dataSha = await resSha.json();
-
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 method: 'PUT',
                 headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
@@ -239,16 +244,20 @@
                     sha: dataSha.sha
                 })
             });
-            if(res.ok) alert("Berhasil Terupdate!");
+            if(res.ok) alert("Sukses Update!");
             loadJsonData();
+        }
+
+        function deleteUser(i) {
+            if(!confirm("Hapus?")) return;
+            userArray.splice(i, 1);
+            pushToGitHub("Remove User");
         }
 
         function filterUser() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             const cards = document.querySelectorAll('#userList > div');
-            cards.forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(q) ? 'block' : 'none';
-            });
+            cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none');
         }
     </script>
 </body>
