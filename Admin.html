@@ -3,243 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Admin Ican2233</title>
+    <title>ICAN2233 ADMIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
+<body class="bg-[#0b0f1a] text-slate-200 min-h-screen pb-10">
 
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
-        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">Global Manager</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Deep JSON Editor & Auto-Token</p>
+    <div class="bg-indigo-700 p-6 shadow-xl text-center rounded-b-[2rem] mb-6">
+        <h1 class="text-xl font-bold tracking-tighter uppercase italic">Control Panel</h1>
+        <p class="text-[9px] opacity-60 tracking-widest uppercase mt-1">Universal Database Manager</p>
     </div>
 
-    <div class="max-w-md mx-auto px-4">
-        <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
+    <div class="max-w-md mx-auto px-4 space-y-6">
+        
+        <div class="bg-slate-900 p-5 rounded-3xl border border-white/5 shadow-lg">
             <div id="loginArea">
-                <input type="password" id="ghToken" placeholder="GitHub Token" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
-                <div class="flex gap-2">
-                    <button onclick="connectAndSave()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Login & Simpan</button>
-                    <button onclick="clearSavedToken()" class="bg-red-500/10 text-red-500 px-4 rounded-2xl border border-red-500/20"><i class="fa-solid fa-trash-can"></i></button>
+                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-3 outline-none text-emerald-400 text-sm">
+                <button onclick="login()" class="w-full bg-indigo-600 p-4 rounded-2xl font-bold text-xs uppercase tracking-widest">Connect GitHub</button>
+            </div>
+            <div id="selectorArea" class="hidden space-y-3">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">● Online</span>
+                    <button onclick="logout()" class="text-[10px] text-red-400 underline uppercase">Logout</button>
                 </div>
-            </div>
-            <div id="selectorArea" class="hidden space-y-4 mt-4">
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white"></select>
-                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest">Buka File</button>
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 text-sm outline-none"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 text-sm outline-none"></select>
+                <button onclick="loadData()" class="w-full bg-indigo-600 p-4 rounded-2xl font-bold text-xs uppercase">Buka Database</button>
             </div>
         </div>
 
-        <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
-            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Configuration Editor</h2>
-            <div id="configInputs" class="space-y-4"></div>
-            <button onclick="saveDeepConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95">Update Configuration</button>
+        <div id="configArea" class="hidden bg-slate-900 p-6 rounded-3xl border border-white/5 shadow-lg">
+            <h2 class="text-amber-400 font-bold text-xs uppercase mb-4 tracking-widest flex items-center">
+                <i class="fa-solid fa-gear mr-2"></i> System Configuration
+            </h2>
+            <div id="configInputs" class="space-y-4 text-xs"></div>
+            <button onclick="saveAll()" class="w-full mt-6 bg-amber-600 p-4 rounded-2xl font-bold text-xs uppercase tracking-widest">Simpan Perubahan</button>
         </div>
 
-        <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Management</h2>
-            <div id="userInputs" class="space-y-4 mt-4"></div>
-            <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg">Simpan User</button>
-                <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
+        <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-3xl border border-white/5 shadow-lg">
+            <h2 id="formTitle" class="text-emerald-400 font-bold text-xs uppercase mb-4 tracking-widest">User Manager</h2>
+            <div id="userInputs" class="space-y-4"></div>
+            <div class="flex gap-2 mt-6">
+                <button onclick="saveUser()" class="flex-1 bg-emerald-600 p-4 rounded-2xl font-bold text-xs uppercase">Save User</button>
+                <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 p-4 rounded-2xl font-bold text-xs uppercase">Cancel</button>
             </div>
         </div>
 
-        <div id="listArea" class="hidden">
-            <div id="userList" class="space-y-4"></div>
+        <div id="listArea" class="hidden space-y-4">
+            <div class="bg-black/20 p-4 rounded-2xl flex items-center">
+                <i class="fa-solid fa-search text-slate-500 mr-3"></i>
+                <input type="text" id="search" onkeyup="filter()" placeholder="Cari ID atau Username..." class="bg-transparent outline-none text-sm w-full">
+            </div>
+            <div id="userList" class="space-y-3"></div>
         </div>
     </div>
 
     <script>
         const OWNER = 'Ican2233';
         let rawData = null;
-        let userArray = [];
-        let userFields = [];
+        let isEditingIndex = -1;
 
+        // --- AUTH ---
         window.onload = () => {
-            const savedToken = localStorage.getItem('ican_gh_token');
-            if (savedToken) { document.getElementById('ghToken').value = savedToken; connectAndSave(true); }
-        };
-
-        async function connectAndSave(isAuto = false) {
-            const token = document.getElementById('ghToken').value;
-            try {
-                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
-                    headers: { Authorization: `token ${token}` }
-                });
-                if (res.ok) {
-                    const repos = await res.json();
-                    localStorage.setItem('ican_gh_token', token);
-                    const select = document.getElementById('repoSelect');
-                    select.innerHTML = '<option value="">-- PILIH REPO --</option>';
-                    repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
-                    document.getElementById('selectorArea').classList.remove('hidden');
-                    document.getElementById('loginArea').classList.add('hidden');
-                }
-            } catch (e) { localStorage.removeItem('ican_gh_token'); }
+            const tk = localStorage.getItem('ican_token');
+            if(tk) { document.getElementById('ghToken').value = tk; login(); }
         }
+
+        async function login() {
+            const tk = document.getElementById('ghToken').value;
+            const res = await fetch(`https://api.github.com/users/${OWNER}/repos`, { headers: {Authorization: `token ${tk}`} });
+            if(res.ok) {
+                localStorage.setItem('ican_token', tk);
+                const repos = await res.json();
+                const sel = document.getElementById('repoSelect');
+                sel.innerHTML = '<option>-- PILIH REPO --</option>';
+                repos.forEach(r => sel.innerHTML += `<option value="${r.name}">${r.name}</option>`);
+                document.getElementById('loginArea').classList.add('hidden');
+                document.getElementById('selectorArea').classList.remove('hidden');
+            } else { alert("Token Salah!"); }
+        }
+
+        function logout() { localStorage.removeItem('ican_token'); location.reload(); }
 
         async function fetchFiles() {
-            const token = document.getElementById('ghToken').value;
+            const tk = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
-                headers: { Authorization: `token ${token}` }
-            });
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, { headers: {Authorization: `token ${tk}`} });
             const files = await res.json();
-            const select = document.getElementById('fileSelect');
-            select.innerHTML = '<option value="">-- PILIH FILE --</option>';
-            files.filter(f => f.name.endsWith('.json')).forEach(f => select.innerHTML += `<option value="${f.name}">${f.name}</option>`);
+            const sel = document.getElementById('fileSelect');
+            sel.innerHTML = '<option>-- PILIH FILE --</option>';
+            files.filter(f => f.name.endsWith('.json')).forEach(f => sel.innerHTML += `<option value="${f.name}">${f.name}</option>`);
         }
 
-        async function loadJsonData() {
-            const token = document.getElementById('ghToken').value;
+        // --- CORE LOGIC ---
+        async function loadData() {
+            const tk = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` }, cache: 'no-store'
-            });
-            const data = await res.json();
-            rawData = JSON.parse(atob(data.content));
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: {Authorization: `token ${tk}`}, cache: 'no-store' });
+            const d = await res.json();
+            rawData = JSON.parse(atob(d.content));
 
-            // RESET TAMPILAN
-            const cfgContainer = document.getElementById('configInputs');
-            cfgContainer.innerHTML = '';
-            document.getElementById('configArea').classList.add('hidden');
-            document.getElementById('userEditorArea').classList.add('hidden');
-            document.getElementById('listArea').classList.add('hidden');
-
-            // 1. CARI SEMUA FIELD NON-ARRAY (Termasuk di dalam dialogConfig)
-            parseDeepConfig(rawData, cfgContainer);
-            document.getElementById('configArea').classList.remove('hidden');
-
-            // 2. CARI DAFTAR USER (Array)
-            userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
-            if (userArray && Array.isArray(userArray)) {
-                document.getElementById('userEditorArea').classList.remove('hidden');
-                document.getElementById('listArea').classList.remove('hidden');
-                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
-                const uInputs = document.getElementById('userInputs');
-                uInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
-                userFields.forEach(f => uInputs.innerHTML += generateFieldHtml(`field_${f}`, f, ''));
-                renderUserList();
-            }
+            renderConfig();
+            renderUserForm();
+            renderList();
         }
 
-        // FUNGSI PINTAR UNTUK BONGKAR DIALOGCONFIG
-        function parseDeepConfig(obj, container, path = '') {
-            for (let key in obj) {
-                const currentPath = path ? `${path}.${key}` : key;
-                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-                    parseDeepConfig(obj[key], container, currentPath);
-                } else if (!Array.isArray(obj[key])) {
-                    container.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, obj[key]);
+        function renderConfig() {
+            const container = document.getElementById('configInputs');
+            container.innerHTML = '';
+            document.getElementById('configArea').classList.remove('hidden');
+            
+            // Mencari field root (AdminUrl, Marquee) & Nested (dialogConfig)
+            function extract(obj, path = '') {
+                for (let key in obj) {
+                    const p = path ? `${path}.${key}` : key;
+                    if (typeof obj[key] === 'object' && !Array.isArray(obj[key]) && obj[key] !== null) {
+                        extract(obj[key], p);
+                    } else if (!Array.isArray(obj[key])) {
+                        container.innerHTML += createField(p, obj[key], 'config-field');
+                    }
                 }
             }
+            extract(rawData);
         }
 
-        function generateFieldHtml(id, label, value) {
-            const lower = label.toLowerCase();
-            const isDate = lower.includes('exp') || lower.includes('tgl');
-            const isBool = lower.includes('enabled') || lower.includes('mandatory') || lower.includes('offline') || lower.includes('allow');
+        function renderUserForm() {
+            const container = document.getElementById('userInputs');
+            container.innerHTML = '';
+            const users = rawData.Users || (Array.isArray(rawData) ? rawData : null);
+            if (users) {
+                document.getElementById('userEditorArea').classList.remove('hidden');
+                document.getElementById('listArea').classList.remove('hidden');
+                const fields = users.length > 0 ? Object.keys(users[0]) : ['ID', 'Expiry', 'AllowOffline'];
+                fields.forEach(f => container.innerHTML += createField(f, '', 'user-field'));
+            }
+        }
 
+        function createField(label, val, className) {
+            const isBool = label.toLowerCase().match(/allow|status|enabled|mandatory/);
+            const isDate = label.toLowerCase().match(/expiry|tgl|date/);
+            
             if (isBool) {
-                return `
-                <div class="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700 rounded-2xl mb-2">
-                    <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${label.replace(/\./g, ' > ')}</label>
-                    <select id="${id}" data-path="${label}" class="deep-cfg bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
-                        <option value="true" ${value === true || value === 'true' ? 'selected' : ''}>TRUE</option>
-                        <option value="false" ${value === false || value === 'false' ? 'selected' : ''}>FALSE</option>
+                return `<div class="p-3 bg-black/20 rounded-xl flex justify-between items-center mb-2">
+                    <label class="font-bold text-[10px] uppercase">${label}</label>
+                    <select data-key="${label}" class="${className} bg-indigo-600 text-[10px] p-1 rounded font-bold">
+                        <option value="true" ${val == true ? 'selected' : ''}>TRUE</option>
+                        <option value="false" ${val == false ? 'selected' : ''}>FALSE</option>
                     </select>
                 </div>`;
             }
-
-            return `
-            <div class="space-y-1 mb-2">
-                <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${label.replace(/\./g, ' > ')}</label>
-                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="deep-cfg w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
+            return `<div class="mb-3">
+                <label class="block text-[10px] font-bold uppercase mb-1 opacity-50 ml-1">${label}</label>
+                <input type="${isDate ? 'date' : 'text'}" data-key="${label}" value="${val}" class="${className} w-full p-3 bg-black/30 border border-slate-700 rounded-xl text-sm outline-none">
             </div>`;
         }
 
-        async function saveDeepConfig() {
-            const inputs = document.querySelectorAll('.deep-cfg');
-            inputs.forEach(input => {
-                const path = input.dataset.path.split('.');
-                let ref = rawData;
-                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
-                let val = input.value;
-                if (val === 'true') val = true; else if (val === 'false') val = false;
-                ref[path[path.length - 1]] = val;
-            });
-            await pushToGitHub("Update Config");
-        }
-
-        // --- FUNGSI GITHUB PUSH ---
-        async function pushToGitHub(msg) {
-            const token = document.getElementById('ghToken').value;
-            const repo = document.getElementById('repoSelect').value;
-            const file = document.getElementById('fileSelect').value;
-            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` }
-            });
-            const dataSha = await resSha.json();
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: msg,
-                    content: btoa(JSON.stringify(rawData, null, 2)),
-                    sha: dataSha.sha
-                })
-            });
-            if(res.ok) alert("Sukses Update!");
-            loadJsonData();
-        }
-
-        function clearSavedToken() { localStorage.removeItem('ican_gh_token'); location.reload(); }
-        function renderUserList() {
+        function renderList() {
             const list = document.getElementById('userList');
             list.innerHTML = '';
-            userArray.forEach((u, i) => {
-                list.innerHTML += `<div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg flex justify-between items-center">
-                    <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
+            const users = rawData.Users || (Array.isArray(rawData) ? rawData : []);
+            users.forEach((u, i) => {
+                let detail = '';
+                for(let k in u) detail += `<div class="text-[9px]"><span class="opacity-40 uppercase">${k}:</span> <span class="text-emerald-400 font-mono">${u[k]}</span></div>`;
+                list.innerHTML += `<div class="bg-slate-900 p-4 rounded-3xl border border-white/5 flex justify-between items-center shadow-md">
+                    <div class="space-y-1">${detail}</div>
                     <div class="flex gap-2">
-                        <button onclick="editUser(${i})" class="text-blue-400 p-2"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteUser(${i})" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="editUser(${i})" class="w-8 h-8 bg-blue-500/20 text-blue-400 rounded-lg"><i class="fa-solid fa-pen text-xs"></i></button>
+                        <button onclick="delUser(${i})" class="w-8 h-8 bg-red-500/20 text-red-400 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
                     </div>
                 </div>`;
             });
         }
+
+        // --- ACTIONS ---
         function editUser(i) {
-            const u = userArray[i];
-            document.getElementById('editIndex').value = i;
-            userFields.forEach(f => {
-                const el = document.getElementById(`field_${f}`);
-                if(el.type === 'date' && u[f].includes('/')) {
-                    const p = u[f].split('/'); el.value = `${p[2]}-${p[1]}-${p[0]}`;
-                } else { el.value = u[f]; }
+            isEditingIndex = i;
+            const users = rawData.Users || rawData;
+            const u = users[i];
+            document.querySelectorAll('.user-field').forEach(input => {
+                const key = input.dataset.key;
+                input.value = u[key];
             });
             document.getElementById('btnCancel').classList.remove('hidden');
+            document.getElementById('formTitle').innerText = "Edit User Mode";
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
-        async function saveUserData() {
-            const index = parseInt(document.getElementById('editIndex').value);
+
+        function resetUserForm() {
+            isEditingIndex = -1;
+            document.querySelectorAll('.user-field').forEach(i => i.value = '');
+            document.getElementById('btnCancel').classList.add('hidden');
+            document.getElementById('formTitle').innerText = "User Manager";
+        }
+
+        async function saveUser() {
             let newUser = {};
-            userFields.forEach(f => {
-                let val = document.getElementById(`field_${f}`).value;
-                if (val === 'true') val = true; else if (val === 'false') val = false;
-                newUser[f] = val;
+            document.querySelectorAll('.user-field').forEach(i => {
+                const key = i.dataset.key;
+                newUser[key] = i.value === 'true' ? true : (i.value === 'false' ? false : i.value);
             });
-            if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
-            await pushToGitHub("User Sync");
+            
+            const users = rawData.Users || rawData;
+            if (isEditingIndex > -1) users[isEditingIndex] = newUser;
+            else users.push(newUser);
+            
+            await saveAll();
             resetUserForm();
         }
-        function resetUserForm() {
-            document.getElementById('editIndex').value = "-1";
-            userFields.forEach(f => document.getElementById(`field_${f}`).value = '');
-            document.getElementById('btnCancel').classList.add('hidden');
+
+        async function delUser(i) {
+            if(!confirm("Hapus user ini?")) return;
+            const users = rawData.Users || rawData;
+            users.splice(i, 1);
+            await saveAll();
         }
-        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
+
+        async function saveAll() {
+            // Update Config Fields First
+            document.querySelectorAll('.config-field').forEach(input => {
+                const path = input.dataset.key.split('.');
+                let ref = rawData;
+                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                let val = input.value;
+                ref[path[path.length - 1]] = val === 'true' ? true : (val === 'false' ? false : val);
+            });
+
+            const tk = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            
+            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: {Authorization: `token ${tk}`} });
+            const dataSha = await resSha.json();
+
+            await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                method: 'PUT',
+                headers: { Authorization: `token ${tk}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: "Admin Update",
+                    content: btoa(JSON.stringify(rawData, null, 2)),
+                    sha: dataSha.sha
+                })
+            });
+            alert("Database Berhasil Diperbarui!");
+            loadData();
+        }
+
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none');
+        }
     </script>
 </body>
 </html>
