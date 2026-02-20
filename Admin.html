@@ -3,313 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Manager - Ican2233</title>
+    <title>Ultimate Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f1a; color: #e2e8f0; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        .input-focus:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
-        select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em; }
-    </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
 
-    <div class="bg-indigo-600 p-8 shadow-2xl mb-8 rounded-b-[3rem] text-center border-b border-white/10">
-        <h1 class="text-2xl font-black tracking-tighter text-white uppercase italic">TKS TEAM DEV</h1>
-        <p id="statusPath" class="text-[9px] opacity-70 tracking-[0.3em] uppercase mt-2 text-indigo-100">Ready to Connect</p>
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10">
+        <h1 class="text-2xl font-black text-center tracking-tighter italic text-white uppercase">Super Control Panel</h1>
+        <p class="text-[10px] text-center opacity-70 tracking-[0.4em] uppercase mt-1 text-blue-200">Ican2233 Global Manager</p>
     </div>
 
-    <div class="max-w-md mx-auto px-5">
+    <div class="max-w-md mx-auto px-4">
         
-        <div class="glass p-6 rounded-[2.5rem] mb-6 shadow-xl">
-            <div id="authArea">
-                <label class="text-[10px] text-indigo-400 font-bold uppercase ml-2 mb-2 block">GitHub Personal Token</label>
-                <input type="password" id="ghToken" placeholder="ghp_..." class="w-full p-4 bg-black/30 border border-slate-700 rounded-2xl mb-4 outline-none text-emerald-400 font-mono text-sm">
-                <button onclick="connectGitHub()" id="btnConnect" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95">Connect Account</button>
+        <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
+            <div id="loginArea">
+                <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">Akses GitHub Token</label>
+                <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
+                <button onclick="fetchAllRepos()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-2xl font-black text-xs transition active:scale-95 uppercase tracking-widest shadow-lg">Hubungkan Akun</button>
             </div>
 
-            <div id="pickerArea" class="hidden space-y-4">
-                <div>
-                    <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">Select Repository</label>
-                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800/50 border border-slate-700 rounded-2xl text-sm font-bold outline-none mt-1"></select>
+            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
+                <div class="space-y-1">
+                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih Repository</label>
+                    <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-blue-500 text-white appearance-none"></select>
                 </div>
-                <div>
-                    <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">Select JSON File</label>
-                    <select id="fileSelect" class="w-full p-4 bg-slate-800/50 border border-slate-700 rounded-2xl text-sm font-bold outline-none mt-1"></select>
+                <div class="space-y-1">
+                    <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">Pilih File Database (JSON)</label>
+                    <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 outline-none focus:border-indigo-500 text-white appearance-none"></select>
                 </div>
-                <button onclick="loadContent()" class="w-full bg-white text-indigo-900 p-4 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all">Open Editor</button>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka & Muat Data</button>
+            </div>
+        </div>
+
+        <div id="configEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center">
+                <i class="fa-solid fa-code-merge mr-2"></i> Update Config Editor
+            </h2>
+            <div id="configInputs" class="space-y-5"></div>
+            <button onclick="saveConfigData()" id="btnSaveConfig" class="w-full mt-8 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg hover:bg-amber-500 transition active:scale-95">Simpan Perubahan Config</button>
+        </div>
+
+        <div id="editorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
+            <div id="dynamicInputs" class="space-y-4"></div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase hover:bg-emerald-500 transition shadow-lg active:scale-95">Simpan User</button>
+                <button id="btnCancel" onclick="resetForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
 
-        <div id="editorPanel" class="hidden animate-in fade-in duration-500">
-            <div class="glass p-6 rounded-[2.5rem] shadow-2xl border-t-4 border-indigo-500 mb-8">
-                <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                    <h2 id="editorTitle" class="text-indigo-400 font-black text-xs uppercase tracking-widest">Editor</h2>
-                    <span id="typeTag" class="text-[8px] bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded font-bold uppercase">Object</span>
-                </div>
-
-                <div id="formFields" class="space-y-5"></div>
-
-                <div class="flex gap-3 mt-10">
-                    <button onclick="pushUpdate()" id="btnSave" class="flex-1 bg-indigo-600 text-white p-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95">Push to GitHub</button>
-                    <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white px-6 rounded-2xl font-bold text-xs uppercase">Cancel</button>
-                </div>
+        <div id="dataArea" class="hidden">
+            <div class="relative mb-6">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari username, ID, atau password..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+            </div>
+            
+            <div class="flex justify-between items-center mb-4 px-2">
+                <h3 class="font-black text-slate-500 text-[10px] uppercase tracking-[0.4em]">Active Records</h3>
+                <span id="count" class="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold">0</span>
             </div>
 
-            <div id="listPanel" class="hidden space-y-4">
-                <div class="relative mb-6">
-                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                    <input type="text" id="searchBar" onkeyup="filterList()" placeholder="Quick search..." class="w-full p-5 pl-14 bg-slate-900/80 rounded-2xl border border-slate-800 outline-none text-sm focus:border-indigo-500 shadow-xl">
-                </div>
-                <div id="cardContainer" class="space-y-4"></div>
-            </div>
+            <div id="userList" class="space-y-4"></div>
         </div>
+
     </div>
 
     <script>
-        let OWNER = 'Ican2233';
+        const OWNER = 'Ican2233';
         let allData = null;
         let isArrayMode = false;
-        let currentEditIdx = -1;
 
-        // --- AUTH & FETCH ---
-        async function connectGitHub() {
+        async function fetchAllRepos() {
             const token = document.getElementById('ghToken').value;
+            if(!token) return alert("Masukkan Token!");
             try {
-                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?sort=updated`, {
+                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
                     headers: { Authorization: `token ${token}` }
                 });
-                if(!res.ok) throw new Error();
                 const repos = await res.json();
-                localStorage.setItem('gh_token', token);
-                
                 const select = document.getElementById('repoSelect');
-                select.innerHTML = repos.map(r => `<option value="${r.name}">${r.name.toUpperCase()}</option>`).join('');
-                document.getElementById('authArea').classList.add('hidden');
-                document.getElementById('pickerArea').classList.remove('hidden');
-                fetchFiles();
-            } catch (e) { alert("Token Salah!"); }
+                select.innerHTML = '<option value="">-- PILIH REPOSITORY --</option>';
+                repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
+                document.getElementById('selectorArea').classList.remove('hidden');
+                document.getElementById('loginArea').classList.add('hidden');
+            } catch (e) { alert("Koneksi Gagal/Token Salah!"); }
         }
 
         async function fetchFiles() {
-            const token = localStorage.getItem('gh_token');
+            const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, {
                 headers: { Authorization: `token ${token}` }
             });
             const files = await res.json();
-            document.getElementById('fileSelect').innerHTML = files
-                .filter(f => f.name.endsWith('.json'))
-                .map(f => `<option value="${f.name}">${f.name}</option>`).join('');
+            const select = document.getElementById('fileSelect');
+            select.innerHTML = '<option value="">-- PILIH FILE JSON --</option>';
+            files.filter(f => f.name.endsWith('.json')).forEach(f => select.innerHTML += `<option value="${f.name}">${f.name}</option>`);
         }
 
-        async function loadContent() {
-            const token = localStorage.getItem('gh_token');
+        async function loadJsonData() {
+            const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
+            if(!file) return alert("Pilih file!");
+
             const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
-                headers: { Authorization: `token ${token}` }, cache: 'no-store'
+                headers: { Authorization: `token ${token}` },
+                cache: 'no-store'
             });
-            const raw = await res.json();
-            allData = JSON.parse(atob(raw.content));
-            isArrayMode = Array.isArray(allData);
-
-            document.getElementById('editorPanel').classList.remove('hidden');
-            document.getElementById('typeTag').innerText = isArrayMode ? "Array / User List" : "Nested Object / Config";
-            document.getElementById('statusPath').innerText = `${repo} > ${file}`;
+            const data = await res.json();
+            allData = JSON.parse(atob(data.content));
             
-            refreshUI();
-        }
-
-        function refreshUI() {
-            const container = document.getElementById('formFields');
-            container.innerHTML = '';
-            
-            if (isArrayMode) {
-                document.getElementById('listPanel').classList.remove('hidden');
-                buildArrayForm();
-                renderCards(allData);
+            if(Array.isArray(allData)) {
+                isArrayMode = true;
+                showUserPanel();
             } else {
-                document.getElementById('listPanel').classList.add('hidden');
-                buildRecursiveForm(allData, container);
+                isArrayMode = false;
+                showConfigPanel();
             }
         }
 
-        // --- FORM BUILDERS ---
-        function buildRecursiveForm(obj, container, path = '') {
-            for (let key in obj) {
-                const fullPath = path ? `${path}.${key}` : key;
-                const val = obj[key];
+        // --- LOGIKA CONFIG UPDATE ---
+        function showConfigPanel() {
+            document.getElementById('editorArea').classList.add('hidden');
+            document.getElementById('dataArea').classList.add('hidden');
+            document.getElementById('configEditorArea').classList.remove('hidden');
+            const container = document.getElementById('configInputs');
+            container.innerHTML = '';
+            parseObjectRecursive(allData, container);
+        }
 
-                if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
-                    // Create folder-like section for Nested Objects
-                    const section = document.createElement('div');
-                    section.className = "p-4 bg-indigo-500/5 rounded-3xl border border-indigo-500/10 space-y-4 my-2";
-                    section.innerHTML = `<label class="text-[10px] text-indigo-400 font-black uppercase tracking-widest pl-2">${key}</label>`;
-                    container.appendChild(section);
-                    buildRecursiveForm(val, section, fullPath);
-                } else if (Array.isArray(val)) {
-                    // Handler for simple lists like socialLinks
-                    const listDiv = document.createElement('div');
-                    listDiv.className = "p-4 bg-slate-800/30 rounded-3xl space-y-3";
-                    listDiv.innerHTML = `<label class="text-[10px] text-slate-500 font-bold uppercase pl-2">${key} (List)</label>`;
-                    val.forEach((item, i) => buildRecursiveForm(item, listDiv, `${fullPath}.${i}`));
-                    container.appendChild(listDiv);
+        function parseObjectRecursive(obj, container, path = '') {
+            for (let key in obj) {
+                const currentPath = path ? `${path}.${key}` : key;
+                if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                    parseObjectRecursive(obj[key], container, currentPath);
                 } else {
-                    container.appendChild(createInput(key, val, fullPath, 'config-input'));
+                    container.innerHTML += `
+                        <div class="space-y-1">
+                            <label class="text-[9px] text-slate-500 font-black uppercase tracking-widest ml-2">${currentPath.replace(/\./g, ' > ')}</label>
+                            <input type="text" data-path="${currentPath}" value="${obj[key]}" 
+                            class="config-input w-full p-4 bg-black/40 border border-slate-700 rounded-2xl outline-none text-sm text-amber-400 focus:border-amber-500 shadow-inner">
+                        </div>`;
                 }
             }
         }
 
-        function buildArrayForm() {
-            const container = document.getElementById('formFields');
-            const template = allData.length > 0 ? allData[0] : { username: "", password: "", expiresAt: "", allowOffline: false };
-            for(let key in template) {
-                container.appendChild(createInput(key, '', key, 'user-input'));
-            }
+        async function saveConfigData() {
+            const inputs = document.querySelectorAll('.config-input');
+            inputs.forEach(input => {
+                const path = input.dataset.path.split('.');
+                let ref = allData;
+                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                const val = input.value;
+                ref[path[path.length - 1]] = isNaN(val) || val === '' ? val : Number(val);
+            });
+            await pushToGitHub("Update System Config");
         }
 
-        function createInput(key, val, path, cls) {
-            const div = document.createElement('div');
-            div.className = "flex flex-col gap-1.5";
+        // --- LOGIKA USER MANAGEMENT ---
+        function showUserPanel() {
+            document.getElementById('configEditorArea').classList.add('hidden');
+            document.getElementById('editorArea').classList.remove('hidden');
+            document.getElementById('dataArea').classList.remove('hidden');
+            const container = document.getElementById('dynamicInputs');
+            container.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
             
-            // Logika Deteksi Tipe Input
-            const isBool = (typeof val === 'boolean' || ['enabled', 'mandatory', 'allowoffline'].some(s => key.toLowerCase().includes(s)));
-            let input = '';
-
-            if (isBool) {
-                input = `<select data-path="${path}" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white">
-                    <option value="false" ${val === false ? 'selected' : ''}>FALSE (OFF)</option>
-                    <option value="true" ${val === true ? 'selected' : ''}>TRUE (ON)</option>
-                </select>`;
-            } else if (key.toLowerCase() === 'message') {
-                input = `<textarea data-path="${path}" rows="3" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white">${val}</textarea>`;
-            } else {
-                const type = key.toLowerCase().includes('date') || key.toLowerCase().includes('expires') ? 'date' : 'text';
-                input = `<input type="${type}" data-path="${path}" value="${val}" class="${cls} w-full p-4 bg-slate-800/80 border border-slate-700 rounded-2xl outline-none text-white input-focus">`;
-            }
-
-            div.innerHTML = `<label class="text-[9px] text-slate-500 font-bold uppercase ml-3">${key}</label>${input}`;
-            return div;
+            const fields = allData.length > 0 ? Object.keys(allData[0]) : ['id', 'username', 'password', 'expiresAt'];
+            fields.forEach(f => {
+                container.innerHTML += `
+                    <div>
+                        <label class="text-[9px] text-slate-500 font-black uppercase ml-2 tracking-widest">${f}</label>
+                        <input type="text" id="field_${f}" class="w-full p-4 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-sm text-white focus:border-emerald-500 transition">
+                    </div>`;
+            });
+            renderUserList(allData);
         }
 
-        // --- LIST RENDER ---
-        function renderCards(data) {
-            const container = document.getElementById('cardContainer');
-            container.innerHTML = '';
-            data.forEach((item, index) => {
-                const originalIdx = allData.indexOf(item);
-                let info = '';
-                for(let k in item) info += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span class="text-slate-500 uppercase">${k}</span><span class="text-indigo-300 font-mono truncate ml-4">${item[k]}</span></div>`;
-                
-                container.innerHTML += `
-                <div class="glass p-5 rounded-[2rem] border border-white/5 shadow-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-black text-white italic uppercase truncate">${item.username || item.name || 'DATA'}</h3>
-                        <div class="flex gap-2">
-                            <button onclick="editRow(${originalIdx})" class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteRow(${originalIdx})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all"><i class="fa-solid fa-trash"></i></button>
+        function renderUserList(data) {
+            const list = document.getElementById('userList');
+            document.getElementById('count').innerText = data.length;
+            list.innerHTML = '';
+            
+            data.forEach((u, i) => {
+                let details = '';
+                Object.keys(u).forEach(key => {
+                    details += `
+                        <div class="flex justify-between items-center border-b border-white/5 py-1">
+                            <span class="text-[8px] text-slate-500 uppercase font-bold">${key}</span>
+                            <span class="text-[10px] ${key.includes('pass') ? 'text-red-400' : 'text-emerald-400'} font-mono">${u[key] || '-'}</span>
+                        </div>`;
+                });
+
+                list.innerHTML += `
+                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg animate-in fade-in zoom-in duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="truncate pr-4">
+                                <div class="text-[8px] text-blue-400 font-bold uppercase tracking-widest mb-1">REC #${i+1}</div>
+                                <div class="font-black text-white text-lg uppercase italic tracking-tighter">${u.username || u.name || 'UNNAMED'}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editMode(${i})" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center active:scale-90 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-black/20 p-4 rounded-2xl">${info}</div>
-                </div>`;
+                        <div class="bg-black/40 p-4 rounded-2xl space-y-1 border border-white/5">
+                            ${details}
+                        </div>
+                    </div>`;
             });
         }
 
-        // --- CORE LOGIC: PUSH & SAVE ---
-        async function pushUpdate() {
-            const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.innerText = "SINKRONISASI...";
+        async function saveUserData() {
+            const index = parseInt(document.getElementById('editIndex').value);
+            const fields = document.querySelectorAll('#dynamicInputs input:not([type="hidden"])');
+            let newUser = {};
+            fields.forEach(input => {
+                const fieldName = input.id.replace('field_', '');
+                newUser[fieldName] = input.value;
+            });
 
-            if (isArrayMode) {
-                // Logic for User List (Array)
-                let newItem = {};
-                document.querySelectorAll('.user-input').forEach(i => {
-                    const key = i.getAttribute('data-path');
-                    let val = i.value;
-                    if(val === 'true') val = true; else if(val === 'false') val = false;
-                    newItem[key] = val;
-                });
-                if(currentEditIdx > -1) allData[currentEditIdx] = newItem; else allData.push(newItem);
-            } else {
-                // Logic for Update Dialog (Nested Object)
-                document.querySelectorAll('.config-input').forEach(i => {
-                    const path = i.getAttribute('data-path').split('.');
-                    let val = i.value;
-                    if(val === 'true') val = true; else if(val === 'false') val = false;
+            if(index === -1) allData.push(newUser); else allData[index] = newUser;
+            await pushToGitHub(index === -1 ? "Add New User" : "Update User Info");
+            resetForm();
+        }
 
-                    // Deep nesting navigation
-                    let ref = allData;
-                    for(let k=0; k < path.length - 1; k++) {
-                        ref = ref[path[k]];
-                    }
-                    ref[path[path.length - 1]] = val;
-                });
-            }
+        function editMode(i) {
+            const u = allData[i];
+            document.getElementById('editIndex').value = i;
+            Object.keys(u).forEach(f => {
+                const el = document.getElementById(`field_${f}`);
+                if(el) el.value = u[f];
+            });
+            document.getElementById('btnCancel').classList.remove('hidden');
+            document.getElementById('formTitle').innerText = "Edit: " + (u.username || "User");
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function resetForm() {
+            document.getElementById('editIndex').value = "-1";
+            document.querySelectorAll('#dynamicInputs input:not([type="hidden"])').forEach(i => i.value = '');
+            document.getElementById('btnCancel').classList.add('hidden');
+            document.getElementById('formTitle').innerText = "Manajemen User";
+        }
+
+        async function deleteUser(i) {
+            if(!confirm("Hapus data user ini?")) return;
+            allData.splice(i, 1);
+            await pushToGitHub("Delete User Record");
+        }
+
+        function filterData() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allData.filter(u => Object.values(u).some(v => String(v).toLowerCase().includes(q)));
+            renderUserList(filtered);
+        }
+
+        // --- CORE GITHUB PUSH ---
+        async function pushToGitHub(msg) {
+            const token = document.getElementById('ghToken').value;
+            const repo = document.getElementById('repoSelect').value;
+            const file = document.getElementById('fileSelect').value;
+            const btn = isArrayMode ? document.getElementById('btnSaveUser') : document.getElementById('btnSaveConfig');
+            
+            btn.disabled = true; btn.innerText = "PROSES...";
 
             try {
-                const token = localStorage.getItem('gh_token');
-                const repo = document.getElementById('repoSelect').value;
-                const file = document.getElementById('fileSelect').value;
-                
-                const getSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
-                const shaData = await getSha.json();
-
-                const push = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                const dataSha = await resSha.json();
+                const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                     method: 'PUT',
                     headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: "Cloud Update: " + file,
+                        message: msg,
                         content: btoa(JSON.stringify(allData, null, 2)),
-                        sha: shaData.sha
+                        sha: dataSha.sha
                     })
                 });
-
-                if(push.ok) alert("✅ Data Berhasil Diperbarui!");
-                else alert("❌ Gagal Push ke GitHub!");
-                loadContent();
-            } catch (e) { alert("Error!"); }
-            finally {
-                btn.disabled = false; btn.innerText = "PUSH TO GITHUB";
-                resetUserForm();
+                if(res.ok) alert("Data Berhasil Tersimpan ke GitHub!");
+                loadJsonData();
+            } catch (e) { alert("Gagal menyimpan data!"); }
+            finally { 
+                btn.disabled = false; 
+                btn.innerText = isArrayMode ? "Simpan User" : "Simpan Perubahan Config";
             }
-        }
-
-        function editRow(idx) {
-            currentEditIdx = idx;
-            const item = allData[idx];
-            document.querySelectorAll('.user-input').forEach(i => {
-                const key = i.getAttribute('data-path');
-                i.value = String(item[key] || '');
-            });
-            document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('editorTitle').innerText = "Edit User Mode";
-            window.scrollTo({top: 400, behavior: 'smooth'});
-        }
-
-        function deleteRow(idx) {
-            if(confirm("Hapus data ini?")) { allData.splice(idx, 1); pushUpdate(); }
-        }
-
-        function resetUserForm() {
-            currentEditIdx = -1;
-            document.querySelectorAll('.user-input').forEach(i => i.value = '');
-            document.getElementById('btnCancel').classList.add('hidden');
-            document.getElementById('editorTitle').innerText = "Editor";
-        }
-
-        function filterList() {
-            const q = document.getElementById('searchBar').value.toLowerCase();
-            const filtered = allData.filter(item => Object.values(item).some(v => String(v).toLowerCase().includes(q)));
-            renderCards(filtered);
-        }
-
-        // Auto Load Token if exist
-        window.onload = () => {
-            const t = localStorage.getItem('gh_token');
-            if(t) { document.getElementById('ghToken').value = t; connectGitHub(); }
         }
     </script>
 </body>
