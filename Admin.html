@@ -10,8 +10,8 @@
 <body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
 
     <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
-        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">Ican2233 Smart Admin</h1>
-        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Universal JSON & Auto-Token System</p>
+        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">TKS TEAM Smart Admin</h1>
+        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Powered By Ican</p>
     </div>
 
     <div class="max-w-md mx-auto px-4">
@@ -129,16 +129,17 @@
             const data = await res.json();
             rawData = JSON.parse(atob(data.content));
 
-            // RESET TAMPILAN
             const cfgContainer = document.getElementById('configInputs');
             cfgContainer.innerHTML = '';
             document.getElementById('configArea').classList.add('hidden');
             document.getElementById('userEditorArea').classList.add('hidden');
             document.getElementById('listArea').classList.add('hidden');
 
-            // 1. CARI SEMUA FIELD (ROOT & NESTED)
+            // 1. CARI FIELD CONFIG (Root & Nested) - SKIP DATA USERS
             function extractConfig(obj, path = '') {
                 for (let key in obj) {
+                    if (key.toLowerCase() === 'users') continue; // JANGAN MASUKKAN USERS KE CONFIG
+
                     const currentPath = path ? `${path}.${key}` : key;
                     if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
                         extractConfig(obj[key], currentPath);
@@ -150,7 +151,7 @@
             extractConfig(rawData);
             if (cfgContainer.innerHTML !== '') document.getElementById('configArea').classList.remove('hidden');
 
-            // 2. HANDLE USERS
+            // 2. HANDLE USERS (Murni di bagian bawah)
             userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
             if (userArray && Array.isArray(userArray)) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
@@ -167,7 +168,6 @@
             const lower = label.toLowerCase();
             const isBool = lower.match(/enabled|mandatory|offline|allow|status/);
             const isDate = lower.match(/exp|tgl|date/);
-            // Bersihkan label dari titik untuk tampilan
             const cleanLabel = label.split('.').pop().toUpperCase();
 
             if (isBool) {
@@ -217,8 +217,6 @@
         async function saveGlobalConfig() {
             const btn = document.getElementById('btnSaveConfig');
             btn.disabled = true; btn.innerText = "MENYIMPAN...";
-            
-            // Ambil semua input di bagian config
             const inputs = document.querySelectorAll('#configInputs .config-val');
             inputs.forEach(input => {
                 const path = input.getAttribute('data-path').split('.');
@@ -228,7 +226,6 @@
                 if (val === 'true') val = true; else if (val === 'false') val = false;
                 ref[path[path.length - 1]] = val;
             });
-
             await pushToGitHub("Global Update");
             btn.disabled = false; btn.innerText = "UPDATE CONFIG";
         }
