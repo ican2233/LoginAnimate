@@ -3,255 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICAN2233 ADMIN</title>
+    <title>Premium Admin Ican2233</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-[#0b0f1a] text-slate-200 min-h-screen pb-10">
+<body class="bg-[#0b0f1a] min-h-screen pb-20 font-sans text-slate-200">
 
-    <div class="bg-indigo-700 p-6 shadow-xl text-center rounded-b-[2rem] mb-6">
-        <h1 class="text-xl font-bold tracking-tighter uppercase italic">Control Panel</h1>
-        <p class="text-[9px] opacity-60 tracking-widest uppercase mt-1">Universal Database Manager</p>
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-900 p-8 shadow-2xl mb-6 rounded-b-[3rem] border-b border-white/10 text-center">
+        <h1 class="text-2xl font-black tracking-tighter italic text-white uppercase">Ican2233 Smart Admin</h1>
+        <p class="text-[10px] opacity-70 tracking-[0.4em] uppercase mt-1">Universal JSON & Auto-Token System</p>
     </div>
 
-    <div class="max-w-md mx-auto px-4 space-y-6">
-        
-        <div class="bg-slate-900 p-5 rounded-3xl border border-white/5 shadow-lg">
+    <div class="max-w-md mx-auto px-4">
+        <div class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl border border-white/5 mb-6 shadow-xl">
             <div id="loginArea">
-                <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-3 outline-none text-emerald-400 text-sm">
-                <button onclick="login()" class="w-full bg-indigo-600 p-4 rounded-2xl font-bold text-xs uppercase tracking-widest">Connect GitHub</button>
-            </div>
-            <div id="selectorArea" class="hidden space-y-3">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">● Online</span>
-                    <button onclick="logout()" class="text-[10px] text-red-400 underline uppercase">Logout</button>
+                <label class="text-[9px] text-blue-400 font-black uppercase tracking-widest ml-2 mb-2 block">GitHub Personal Access Token</label>
+                <div class="relative">
+                    <input type="password" id="ghToken" placeholder="Masukkan ghp_..." class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl mb-4 outline-none text-sm text-emerald-400 focus:border-blue-500 transition shadow-inner">
+                    <button onclick="toggleTokenVisibility()" class="absolute right-4 top-4 text-slate-500">
+                        <i id="tokenEye" class="fa-solid fa-eye"></i>
+                    </button>
                 </div>
-                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 text-sm outline-none"></select>
-                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 text-sm outline-none"></select>
-                <button onclick="loadData()" class="w-full bg-indigo-600 p-4 rounded-2xl font-bold text-xs uppercase">Buka Database</button>
+                <div class="flex gap-2">
+                    <button onclick="connectAndSave()" class="flex-1 bg-blue-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Login & Simpan</button>
+                    <button onclick="clearSavedToken()" class="bg-red-500/10 text-red-500 px-4 rounded-2xl border border-red-500/20"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+            
+            <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
+                <div class="flex justify-between items-center px-2">
+                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Tersambung</span>
+                    <button onclick="logout()" class="text-[9px] text-red-400 font-bold uppercase underline">Ganti Akun</button>
+                </div>
+                <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
+                <select id="fileSelect" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
+                <button onclick="loadJsonData()" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition">Buka Database</button>
             </div>
         </div>
 
-        <div id="configArea" class="hidden bg-slate-900 p-6 rounded-3xl border border-white/5 shadow-lg">
-            <h2 class="text-amber-400 font-bold text-xs uppercase mb-4 tracking-widest flex items-center">
-                <i class="fa-solid fa-gear mr-2"></i> System Configuration
-            </h2>
-            <div id="configInputs" class="space-y-4 text-xs"></div>
-            <button onclick="saveAll()" class="w-full mt-6 bg-amber-600 p-4 rounded-2xl font-bold text-xs uppercase tracking-widest">Simpan Perubahan</button>
+        <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
+            <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Global Config</h2>
+            <div id="configInputs" class="space-y-4"></div>
+            <button onclick="saveGlobalConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Update Config</button>
         </div>
 
-        <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-3xl border border-white/5 shadow-lg">
-            <h2 id="formTitle" class="text-emerald-400 font-bold text-xs uppercase mb-4 tracking-widest">User Manager</h2>
-            <div id="userInputs" class="space-y-4"></div>
-            <div class="flex gap-2 mt-6">
-                <button onclick="saveUser()" class="flex-1 bg-emerald-600 p-4 rounded-2xl font-bold text-xs uppercase">Save User</button>
-                <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 p-4 rounded-2xl font-bold text-xs uppercase">Cancel</button>
+        <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
+            <div id="userInputs" class="space-y-4 mt-4"></div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Simpan User</button>
+                <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
 
-        <div id="listArea" class="hidden space-y-4">
-            <div class="bg-black/20 p-4 rounded-2xl flex items-center">
-                <i class="fa-solid fa-search text-slate-500 mr-3"></i>
-                <input type="text" id="search" onkeyup="filter()" placeholder="Cari ID atau Username..." class="bg-transparent outline-none text-sm w-full">
+        <div id="listArea" class="hidden">
+            <div class="relative mb-6">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
             </div>
-            <div id="userList" class="space-y-3"></div>
+            <div id="userList" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
         const OWNER = 'Ican2233';
         let rawData = null;
-        let isEditingIndex = -1;
+        let userArray = [];
+        let userFields = [];
 
-        // --- AUTH ---
         window.onload = () => {
-            const tk = localStorage.getItem('ican_token');
-            if(tk) { document.getElementById('ghToken').value = tk; login(); }
+            const savedToken = localStorage.getItem('ican_gh_token');
+            if (savedToken) {
+                document.getElementById('ghToken').value = savedToken;
+                connectAndSave(true);
+            }
+        };
+
+        async function connectAndSave(isAuto = false) {
+            const token = document.getElementById('ghToken').value;
+            if (!token) return alert("Masukkan Token!");
+            try {
+                const res = await fetch(`https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated`, {
+                    headers: { Authorization: `token ${token}` }
+                });
+                if (res.ok) {
+                    const repos = await res.json();
+                    localStorage.setItem('ican_gh_token', token);
+                    const select = document.getElementById('repoSelect');
+                    select.innerHTML = '<option value="">-- PILIH REPO --</option>';
+                    repos.forEach(r => select.innerHTML += `<option value="${r.name}">${r.name.toUpperCase()}</option>`);
+                    document.getElementById('selectorArea').classList.remove('hidden');
+                    document.getElementById('loginArea').classList.add('hidden');
+                } else { throw new Error(); }
+            } catch (e) { if(!isAuto) alert("Token Salah!"); localStorage.removeItem('ican_gh_token'); }
         }
 
-        async function login() {
-            const tk = document.getElementById('ghToken').value;
-            const res = await fetch(`https://api.github.com/users/${OWNER}/repos`, { headers: {Authorization: `token ${tk}`} });
-            if(res.ok) {
-                localStorage.setItem('ican_token', tk);
-                const repos = await res.json();
-                const sel = document.getElementById('repoSelect');
-                sel.innerHTML = '<option>-- PILIH REPO --</option>';
-                repos.forEach(r => sel.innerHTML += `<option value="${r.name}">${r.name}</option>`);
-                document.getElementById('loginArea').classList.add('hidden');
-                document.getElementById('selectorArea').classList.remove('hidden');
-            } else { alert("Token Salah!"); }
+        function clearSavedToken() {
+            if(confirm("Hapus token?")) { localStorage.removeItem('ican_gh_token'); document.getElementById('ghToken').value = ''; location.reload(); }
         }
 
-        function logout() { localStorage.removeItem('ican_token'); location.reload(); }
+        function logout() { location.reload(); }
+
+        function toggleTokenVisibility() {
+            const input = document.getElementById('ghToken');
+            const eye = document.getElementById('tokenEye');
+            input.type = input.type === "password" ? "text" : "password";
+            eye.classList.toggle('fa-eye'); eye.classList.toggle('fa-eye-slash');
+        }
 
         async function fetchFiles() {
-            const tk = document.getElementById('ghToken').value;
+            const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, { headers: {Authorization: `token ${tk}`} });
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/`, { headers: { Authorization: `token ${token}` } });
             const files = await res.json();
-            const sel = document.getElementById('fileSelect');
-            sel.innerHTML = '<option>-- PILIH FILE --</option>';
-            files.filter(f => f.name.endsWith('.json')).forEach(f => sel.innerHTML += `<option value="${f.name}">${f.name}</option>`);
+            const select = document.getElementById('fileSelect');
+            select.innerHTML = '<option value="">-- PILIH FILE --</option>';
+            files.filter(f => f.name.endsWith('.json')).forEach(f => select.innerHTML += `<option value="${f.name}">${f.name}</option>`);
         }
 
-        // --- CORE LOGIC ---
-        async function loadData() {
-            const tk = document.getElementById('ghToken').value;
+        async function loadJsonData() {
+            const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: {Authorization: `token ${tk}`}, cache: 'no-store' });
-            const d = await res.json();
-            rawData = JSON.parse(atob(d.content));
+            const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` }, cache: 'no-store' });
+            const data = await res.json();
+            rawData = JSON.parse(atob(data.content));
 
-            renderConfig();
-            renderUserForm();
-            renderList();
-        }
+            // RESET TAMPILAN
+            const cfgContainer = document.getElementById('configInputs');
+            cfgContainer.innerHTML = '';
+            document.getElementById('configArea').classList.add('hidden');
+            document.getElementById('userEditorArea').classList.add('hidden');
+            document.getElementById('listArea').classList.add('hidden');
 
-        function renderConfig() {
-            const container = document.getElementById('configInputs');
-            container.innerHTML = '';
-            document.getElementById('configArea').classList.remove('hidden');
-            
-            // Mencari field root (AdminUrl, Marquee) & Nested (dialogConfig)
-            function extract(obj, path = '') {
+            // 1. CARI SEMUA FIELD (ROOT & NESTED)
+            function extractConfig(obj, path = '') {
                 for (let key in obj) {
-                    const p = path ? `${path}.${key}` : key;
-                    if (typeof obj[key] === 'object' && !Array.isArray(obj[key]) && obj[key] !== null) {
-                        extract(obj[key], p);
+                    const currentPath = path ? `${path}.${key}` : key;
+                    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+                        extractConfig(obj[key], currentPath);
                     } else if (!Array.isArray(obj[key])) {
-                        container.innerHTML += createField(p, obj[key], 'config-field');
+                        cfgContainer.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, obj[key]);
                     }
                 }
             }
-            extract(rawData);
-        }
+            extractConfig(rawData);
+            if (cfgContainer.innerHTML !== '') document.getElementById('configArea').classList.remove('hidden');
 
-        function renderUserForm() {
-            const container = document.getElementById('userInputs');
-            container.innerHTML = '';
-            const users = rawData.Users || (Array.isArray(rawData) ? rawData : null);
-            if (users) {
+            // 2. HANDLE USERS
+            userArray = rawData.Users || (Array.isArray(rawData) ? rawData : null);
+            if (userArray && Array.isArray(userArray)) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
                 document.getElementById('listArea').classList.remove('hidden');
-                const fields = users.length > 0 ? Object.keys(users[0]) : ['ID', 'Expiry', 'AllowOffline'];
-                fields.forEach(f => container.innerHTML += createField(f, '', 'user-field'));
+                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
+                const userInputs = document.getElementById('userInputs');
+                userInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
+                userFields.forEach(f => userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, ''));
+                renderUserList();
             }
         }
 
-        function createField(label, val, className) {
-            const isBool = label.toLowerCase().match(/allow|status|enabled|mandatory/);
-            const isDate = label.toLowerCase().match(/expiry|tgl|date/);
-            
+        function generateFieldHtml(id, label, value) {
+            const lower = label.toLowerCase();
+            const isBool = lower.match(/enabled|mandatory|offline|allow|status/);
+            const isDate = lower.match(/exp|tgl|date/);
+            // Bersihkan label dari titik untuk tampilan
+            const cleanLabel = label.split('.').pop().toUpperCase();
+
             if (isBool) {
-                return `<div class="p-3 bg-black/20 rounded-xl flex justify-between items-center mb-2">
-                    <label class="font-bold text-[10px] uppercase">${label}</label>
-                    <select data-key="${label}" class="${className} bg-indigo-600 text-[10px] p-1 rounded font-bold">
-                        <option value="true" ${val == true ? 'selected' : ''}>TRUE</option>
-                        <option value="false" ${val == false ? 'selected' : ''}>FALSE</option>
+                return `
+                <div class="flex items-center justify-between p-4 bg-slate-800/50 border border-slate-700 rounded-2xl mb-2">
+                    <label class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">${cleanLabel}</label>
+                    <select id="${id}" data-path="${label}" class="config-val bg-indigo-600 text-white text-[10px] font-black rounded-lg px-3 py-1 outline-none">
+                        <option value="true" ${value === true || value === 'true' ? 'selected' : ''}>TRUE</option>
+                        <option value="false" ${value === false || value === 'false' ? 'selected' : ''}>FALSE</option>
                     </select>
                 </div>`;
             }
-            return `<div class="mb-3">
-                <label class="block text-[10px] font-bold uppercase mb-1 opacity-50 ml-1">${label}</label>
-                <input type="${isDate ? 'date' : 'text'}" data-key="${label}" value="${val}" class="${className} w-full p-3 bg-black/30 border border-slate-700 rounded-xl text-sm outline-none">
+            return `
+            <div class="space-y-1 mb-2">
+                <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${cleanLabel}</label>
+                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="config-val w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
             </div>`;
         }
 
-        function renderList() {
+        function renderUserList() {
             const list = document.getElementById('userList');
             list.innerHTML = '';
-            const users = rawData.Users || (Array.isArray(rawData) ? rawData : []);
-            users.forEach((u, i) => {
-                let detail = '';
-                for(let k in u) detail += `<div class="text-[9px]"><span class="opacity-40 uppercase">${k}:</span> <span class="text-emerald-400 font-mono">${u[k]}</span></div>`;
-                list.innerHTML += `<div class="bg-slate-900 p-4 rounded-3xl border border-white/5 flex justify-between items-center shadow-md">
-                    <div class="space-y-1">${detail}</div>
-                    <div class="flex gap-2">
-                        <button onclick="editUser(${i})" class="w-8 h-8 bg-blue-500/20 text-blue-400 rounded-lg"><i class="fa-solid fa-pen text-xs"></i></button>
-                        <button onclick="delUser(${i})" class="w-8 h-8 bg-red-500/20 text-red-400 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
-                    </div>
-                </div>`;
+            userArray.forEach((u, i) => {
+                let detailStr = '';
+                Object.keys(u).forEach(k => {
+                    const val = u[k];
+                    const color = (val === true || val === 'true') ? 'text-emerald-400' : ((val === false || val === 'false') ? 'text-red-400' : 'text-blue-300');
+                    detailStr += `<div class="flex justify-between border-b border-white/5 py-1">
+                        <span class="text-[8px] text-slate-500 uppercase font-bold">${k}</span>
+                        <span class="text-[10px] ${color} font-mono font-bold">${val}</span>
+                    </div>`;
+                });
+                list.innerHTML += `
+                    <div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
+                            <div class="flex gap-2">
+                                <button onclick="editUser(${i})" class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center border border-blue-500/20"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-9 h-9 bg-red-500/10 text-red-400 rounded-xl flex items-center justify-center border border-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="bg-black/40 p-4 rounded-2xl space-y-1">${detailStr}</div>
+                    </div>`;
             });
         }
 
-        // --- ACTIONS ---
+        async function saveGlobalConfig() {
+            const btn = document.getElementById('btnSaveConfig');
+            btn.disabled = true; btn.innerText = "MENYIMPAN...";
+            
+            // Ambil semua input di bagian config
+            const inputs = document.querySelectorAll('#configInputs .config-val');
+            inputs.forEach(input => {
+                const path = input.getAttribute('data-path').split('.');
+                let ref = rawData;
+                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
+                let val = input.value;
+                if (val === 'true') val = true; else if (val === 'false') val = false;
+                ref[path[path.length - 1]] = val;
+            });
+
+            await pushToGitHub("Global Update");
+            btn.disabled = false; btn.innerText = "UPDATE CONFIG";
+        }
+
+        async function saveUserData() {
+            const btn = document.getElementById('btnSaveUser');
+            btn.disabled = true; btn.innerText = "PROSES...";
+            const index = parseInt(document.getElementById('editIndex').value);
+            let newUser = {};
+            userFields.forEach(f => {
+                let val = document.getElementById(`field_${f}`).value;
+                if (val === 'true') val = true; else if (val === 'false') val = false;
+                newUser[f] = val;
+            });
+            if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
+            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
+            await pushToGitHub("User Sync");
+            resetUserForm();
+            btn.disabled = false; btn.innerText = "SIMPAN USER";
+        }
+
         function editUser(i) {
-            isEditingIndex = i;
-            const users = rawData.Users || rawData;
-            const u = users[i];
-            document.querySelectorAll('.user-field').forEach(input => {
-                const key = input.dataset.key;
-                input.value = u[key];
+            const u = userArray[i];
+            document.getElementById('editIndex').value = i;
+            userFields.forEach(f => {
+                const el = document.getElementById(`field_${f}`);
+                let val = u[f];
+                if(el.type === 'date' && val && val.includes('/')) {
+                    const p = val.split('/'); el.value = `${p[2]}-${p[1]}-${p[0]}`;
+                } else { el.value = val; }
             });
             document.getElementById('btnCancel').classList.remove('hidden');
-            document.getElementById('formTitle').innerText = "Edit User Mode";
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetUserForm() {
-            isEditingIndex = -1;
-            document.querySelectorAll('.user-field').forEach(i => i.value = '');
+            document.getElementById('editIndex').value = "-1";
+            userFields.forEach(f => document.getElementById(`field_${f}`).value = '');
             document.getElementById('btnCancel').classList.add('hidden');
-            document.getElementById('formTitle').innerText = "User Manager";
         }
 
-        async function saveUser() {
-            let newUser = {};
-            document.querySelectorAll('.user-field').forEach(i => {
-                const key = i.dataset.key;
-                newUser[key] = i.value === 'true' ? true : (i.value === 'false' ? false : i.value);
-            });
-            
-            const users = rawData.Users || rawData;
-            if (isEditingIndex > -1) users[isEditingIndex] = newUser;
-            else users.push(newUser);
-            
-            await saveAll();
-            resetUserForm();
-        }
-
-        async function delUser(i) {
-            if(!confirm("Hapus user ini?")) return;
-            const users = rawData.Users || rawData;
-            users.splice(i, 1);
-            await saveAll();
-        }
-
-        async function saveAll() {
-            // Update Config Fields First
-            document.querySelectorAll('.config-field').forEach(input => {
-                const path = input.dataset.key.split('.');
-                let ref = rawData;
-                for (let i = 0; i < path.length - 1; i++) ref = ref[path[i]];
-                let val = input.value;
-                ref[path[path.length - 1]] = val === 'true' ? true : (val === 'false' ? false : val);
-            });
-
-            const tk = document.getElementById('ghToken').value;
+        async function pushToGitHub(msg) {
+            const token = document.getElementById('ghToken').value;
             const repo = document.getElementById('repoSelect').value;
             const file = document.getElementById('fileSelect').value;
-            
-            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: {Authorization: `token ${tk}`} });
+            const resSha = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, { headers: { Authorization: `token ${token}` } });
             const dataSha = await resSha.json();
-
             await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 method: 'PUT',
-                headers: { Authorization: `token ${tk}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: "Admin Update",
-                    content: btoa(JSON.stringify(rawData, null, 2)),
-                    sha: dataSha.sha
-                })
+                headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(rawData, null, 2)), sha: dataSha.sha })
             });
-            alert("Database Berhasil Diperbarui!");
-            loadData();
+            alert("Sukses!");
+            loadJsonData();
         }
 
-        function filter() {
-            const q = document.getElementById('search').value.toLowerCase();
-            document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'flex' : 'none');
+        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
+        function filterUser() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none');
         }
     </script>
 </body>
