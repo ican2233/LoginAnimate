@@ -4,7 +4,7 @@
     "username": "Ican",
     "password": "Ican",
     "expiresAt": "2026-02-22",
-    "allowOffline": false
+    "allowOffline": true
   },
   {
     "id": "a793b723e87a4e99",
