@@ -240,21 +240,37 @@
         }
 
         async function saveUserData() {
-            const btn = document.getElementById('btnSaveUser');
-            btn.disabled = true;
-            const index = parseInt(document.getElementById('editIndex').value);
-            let newUser = {};
-            userFields.forEach(f => {
-                let val = document.getElementById(`field_${f}`).value;
-                if (val === 'true') val = true; else if (val === 'false') val = false;
-                newUser[f] = val;
-            });
-            if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
-            await pushToGitHub("User Sync");
-            resetUserForm();
-            btn.disabled = false;
+    const btn = document.getElementById('btnSaveUser');
+    const currentFile = document.getElementById('fileSelect').value; // Ambil nama file aktif
+    btn.disabled = true;
+    const index = parseInt(document.getElementById('editIndex').value);
+    let newUser = {};
+    
+    userFields.forEach(f => {
+        let val = document.getElementById(`field_${f}`).value;
+        const lowerF = f.toLowerCase();
+
+        // KONVERSI TANGGAL KHUSUS UNTUK LoginAuto2.json
+        if (currentFile === 'LoginAuto2.json' && lowerF.match(/exp|tgl|date/) && val.includes('-')) {
+            const parts = val.split('-'); 
+            if (parts[0].length === 4) { // Jika YYYY-MM-DD, ubah ke DD-MM-YYYY
+                val = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
         }
+
+        if (val === 'true') val = true; 
+        else if (val === 'false') val = false;
+        newUser[f] = val;
+    });
+
+    if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
+    if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
+    
+    await pushToGitHub(`User Sync (${currentFile})`);
+    resetUserForm();
+    btn.disabled = false;
+}
+
 
         function editUser(i) {
             const u = userArray[i];
