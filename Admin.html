@@ -32,7 +32,7 @@
             
             <div id="selectorArea" class="hidden space-y-4 mt-4 animate-in fade-in">
                 <div class="flex justify-between items-center px-2">
-                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Online</span>
+                    <span class="text-[10px] text-emerald-500 font-bold tracking-widest uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Tersambung</span>
                     <button onclick="logout()" class="text-[9px] text-red-400 font-bold uppercase underline">Logout</button>
                 </div>
                 <select id="repoSelect" onchange="fetchFiles()" class="w-full p-4 bg-slate-800 rounded-2xl font-bold text-sm border border-slate-600 text-white appearance-none"></select>
@@ -43,15 +43,15 @@
 
         <div id="configArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-t-8 border-amber-500 border border-white/5">
             <h2 class="text-amber-400 font-black text-xs mb-6 uppercase tracking-widest flex items-center"><i class="fa-solid fa-gears mr-2"></i> Global Config</h2>
-            <div id="configInputs" class="space-y-4 text-xs"></div>
+            <div id="configInputs" class="space-y-4"></div>
             <button onclick="saveGlobalConfig()" id="btnSaveConfig" class="w-full mt-6 bg-amber-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Update Config</button>
         </div>
 
         <div id="userEditorArea" class="hidden bg-slate-900 p-6 rounded-[2.5rem] shadow-2xl mb-8 border-l-8 border-emerald-500 border border-white/5">
-            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">User Manager</h2>
+            <h2 id="formTitle" class="text-emerald-400 font-black text-xs mb-6 uppercase tracking-widest">Manajemen User</h2>
             <div id="userInputs" class="space-y-4 mt-4"></div>
             <div class="flex gap-3 mt-8">
-                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Save User</button>
+                <button onclick="saveUserData()" id="btnSaveUser" class="flex-1 bg-emerald-600 text-white p-5 rounded-2xl font-black text-xs uppercase shadow-lg active:scale-95 transition">Simpan User</button>
                 <button id="btnCancel" onclick="resetUserForm()" class="hidden bg-slate-700 text-white p-5 rounded-2xl font-black text-xs uppercase">Batal</button>
             </div>
         </div>
@@ -59,7 +59,7 @@
         <div id="listArea" class="hidden">
             <div class="relative mb-6">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari ID atau Nama..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
+                <input type="text" id="searchInput" onkeyup="filterUser()" placeholder="Cari data user..." class="w-full p-5 pl-14 bg-slate-900 rounded-2xl border border-slate-800 outline-none text-sm focus:border-blue-500 shadow-xl transition">
             </div>
             <div id="userList" class="space-y-4"></div>
         </div>
@@ -129,36 +129,44 @@
 
             const cfgContainer = document.getElementById('configInputs');
             cfgContainer.innerHTML = '';
-            document.getElementById('configArea').classList.add('hidden');
-            document.getElementById('userEditorArea').classList.add('hidden');
-            document.getElementById('listArea').classList.add('hidden');
-
-            // --- FILTER: HANYA CONFIG (NON-ARRAY) ---
+            
+            // --- LOGIKA FILTER KETAT ---
             function extractConfig(obj, path = '') {
-                for (let key in obj) {
-                    if (key.toLowerCase() === 'users') continue; // Skip list user total
-                    
-                    const currentPath = path ? `${path}.${key}` : key;
-                    const value = obj[key];
+                // Jika inputnya bukan object (misal file cuma berisi array), stop.
+                if (Array.isArray(obj)) return; 
 
-                    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                for (let key in obj) {
+                    // 1. Lewati jika key bernama 'Users'
+                    if (key.toLowerCase() === 'users') continue; 
+                    
+                    const value = obj[key];
+                    const currentPath = path ? `${path}.${key}` : key;
+
+                    // 2. Jika value adalah Array (Daftar), JANGAN masukkan ke Config
+                    if (Array.isArray(value)) continue;
+
+                    // 3. Jika value adalah Object (Nested), gali lagi
+                    if (typeof value === 'object' && value !== null) {
                         extractConfig(value, currentPath);
-                    } else if (!Array.isArray(value)) {
+                    } 
+                    // 4. Jika value murni (String/Number/Bool), masukkan ke Config
+                    else {
                         cfgContainer.innerHTML += generateFieldHtml(`cfg_${currentPath}`, currentPath, value, 'config-val');
                     }
                 }
             }
             
             extractConfig(rawData);
-            if (cfgContainer.innerHTML !== '') document.getElementById('configArea').classList.remove('hidden');
+            
+            // Tampilkan Config Area hanya jika ada isinya
+            document.getElementById('configArea').classList.toggle('hidden', cfgContainer.innerHTML === '');
 
-            // --- HANDLE USER LIST ---
+            // --- HANDLE USER DATA ---
             userArray = rawData.Users || (Array.isArray(rawData) ? rawData : []);
-            if (Array.isArray(userArray)) {
+            if (userArray.length >= 0) {
                 document.getElementById('userEditorArea').classList.remove('hidden');
                 document.getElementById('listArea').classList.remove('hidden');
-                // Ambil field dari user pertama atau default
-                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'Expiry'];
+                userFields = userArray.length > 0 ? Object.keys(userArray[0]) : ['ID', 'USERNAME', 'PASSWORD', 'EXPIRESAT', 'ALLOWOFFLINE'];
                 const userInputs = document.getElementById('userInputs');
                 userInputs.innerHTML = '<input type="hidden" id="editIndex" value="-1">';
                 userFields.forEach(f => userInputs.innerHTML += generateFieldHtml(`field_${f}`, f, '', 'user-val'));
@@ -185,7 +193,7 @@
             return `
             <div class="space-y-1 mb-2">
                 <label class="text-[9px] text-slate-500 font-bold uppercase ml-2">${cleanLabel}</label>
-                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="${cssClass} w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition">
+                <input type="${isDate ? 'date' : 'text'}" id="${id}" data-path="${label}" value="${value}" class="${cssClass} w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-sm text-white focus:border-blue-500 transition shadow-inner">
             </div>`;
         }
 
@@ -193,33 +201,32 @@
             const list = document.getElementById('userList');
             list.innerHTML = '';
             userArray.forEach((u, i) => {
-                let details = '';
+                let detailStr = '';
                 Object.keys(u).forEach(k => {
                     const val = u[k];
-                    const color = (val === true || val === 'true') ? 'text-emerald-400' : 'text-slate-300';
-                    details += `<div class="flex justify-between text-[10px] py-1 border-b border-white/5">
-                        <span class="opacity-50 uppercase font-bold">${k}</span>
-                        <span class="${color} font-mono">${val}</span>
+                    const color = (val === true || val === 'true') ? 'text-emerald-400' : 'text-blue-300';
+                    detailStr += `<div class="flex justify-between py-1 border-b border-white/5">
+                        <span class="text-[8px] opacity-50 uppercase">${k}</span>
+                        <span class="text-[10px] ${color} font-bold">${val}</span>
                     </div>`;
                 });
                 list.innerHTML += `
-                    <div class="bg-slate-900/60 p-5 rounded-[2rem] border border-white/5 shadow-lg">
+                    <div class="bg-slate-900/60 p-5 rounded-[2.5rem] border border-white/5 shadow-lg">
                         <div class="flex justify-between items-center mb-3">
-                            <div class="font-black text-white italic uppercase">${u.ID || u.username || 'USER'}</div>
+                            <div class="font-black text-white italic uppercase">${u.ID || u.USERNAME || 'USER'}</div>
                             <div class="flex gap-2">
-                                <button onclick="editUser(${i})" class="w-8 h-8 bg-blue-500/20 text-blue-400 rounded-lg"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteUser(${i})" class="w-8 h-8 bg-red-500/20 text-red-400 rounded-lg"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <button onclick="editUser(${i})" class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteUser(${i})" class="w-9 h-9 bg-red-500/10 text-red-400 rounded-xl border border-red-500/20"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
                         </div>
-                        <div class="bg-black/20 p-3 rounded-xl">${details}</div>
+                        <div class="bg-black/40 p-4 rounded-2xl space-y-1">${detailStr}</div>
                     </div>`;
             });
         }
 
         async function saveGlobalConfig() {
             const btn = document.getElementById('btnSaveConfig');
-            btn.disabled = true; btn.innerText = "WAIT...";
-            
+            btn.disabled = true; btn.innerText = "MENYIMPAN...";
             document.querySelectorAll('.config-val').forEach(input => {
                 const path = input.getAttribute('data-path').split('.');
                 let ref = rawData;
@@ -228,7 +235,6 @@
                 if (val === 'true') val = true; else if (val === 'false') val = false;
                 ref[path[path.length - 1]] = val;
             });
-
             await pushToGitHub("Global Update");
             btn.disabled = false; btn.innerText = "UPDATE CONFIG";
         }
@@ -244,9 +250,7 @@
                 newUser[f] = val;
             });
             if (index === -1) userArray.push(newUser); else userArray[index] = newUser;
-            
-            if (rawData.Users) rawData.Users = userArray; else rawData = userArray;
-            
+            if (rawData.Users) rawData.Users = userArray; else if (Array.isArray(rawData)) rawData = userArray;
             await pushToGitHub("User Sync");
             resetUserForm();
             btn.disabled = false;
@@ -256,8 +260,7 @@
             const u = userArray[i];
             document.getElementById('editIndex').value = i;
             userFields.forEach(f => {
-                const el = document.getElementById(`field_${f}`);
-                el.value = u[f];
+                document.getElementById(`field_${f}`).value = u[f];
             });
             document.getElementById('btnCancel').classList.remove('hidden');
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -278,14 +281,13 @@
             await fetch(`https://api.github.com/repos/${OWNER}/${repo}/contents/${file}`, {
                 method: 'PUT',
                 headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, content: btoa(JSON.stringify(rawData, null, 2)), sha: dataSha.sha })
+                body: JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(JSON.stringify(rawData, null, 2)))), sha: dataSha.sha })
             });
-            alert("Berhasil!");
+            alert("Sukses!");
             loadJsonData();
         }
 
-        function deleteUser(i) { if(confirm("Hapus user?")) { userArray.splice(i, 1); pushToGitHub("Delete User"); } }
-        
+        function deleteUser(i) { if(confirm("Hapus?")) { userArray.splice(i, 1); pushToGitHub("Delete"); } }
         function filterUser() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('#userList > div').forEach(c => c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none');
