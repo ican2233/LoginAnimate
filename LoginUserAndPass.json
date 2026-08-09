@@ -54,5 +54,12 @@
     "password": "User5",
     "expiresAt": "2026-04-15",
     "allowOffline": true
+  },
+  {
+    "id": "afe3b99a3f2a39bb",
+    "username": "Nay",
+    "password": "Nay",
+    "expiresAt": "2026-08-10",
+    "allowOffline": true
   }
 ]
