@@ -61,5 +61,12 @@
     "password": "Nay",
     "expiresAt": "2026-08-10",
     "allowOffline": true
+  },
+  {
+    "id": "a07e375692cd4f16",
+    "username": "Roka",
+    "password": "Roka",
+    "expiresAt": "2026-09-11",
+    "allowOffline": true
   }
 ]
